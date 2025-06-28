@@ -32,21 +32,26 @@ public class Usuario {
     @Column(name = "correo", nullable = false, length = 50)
     private String correo;
 
-    @Column(name = "contrasenia", nullable = false, length = 255)
+    @Column(name = "contrasenia", nullable = false)
     private String contrasenia;
 
-    @Column(name = "estado", nullable = false)
+    @Column(name = "estado", nullable = false)      // Para eliminado lógico
     private Boolean estado = false;
+
+    @OneToMany(mappedBy = "paciente", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Cita> citasComoPaciente;
+
+
+    // Atributos de Doctores
 
     @Column(name = "codigo_cmp", unique = true, nullable = true, length = 20)
     private String codigoCMP; // Código del Colegio Médico del Perú
 
-    // Relaciones inversas
+    // Se debe manejar en el front la replicabilidad del horario semanalmente
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<HorarioDoctor> horarios;
 
-    @OneToMany(mappedBy = "paciente", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Cita> citasComoPaciente;
+
 
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Cita> citasComoDoctor;

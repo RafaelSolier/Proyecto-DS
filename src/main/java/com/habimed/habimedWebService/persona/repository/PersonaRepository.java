@@ -10,7 +10,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Repository
-public interface PersonaRepository extends JpaRepository<Persona, Long> {  // Cambiado Integer por Long para el DNI
+public interface PersonaRepository extends JpaRepository<Persona, Integer> {  // Cambiado Integer por Long para el DNI
 
 //    @Query("SELECT p FROM Persona p WHERE " +
 //           "(:dni IS NULL OR p.dni = :dni) AND " +
