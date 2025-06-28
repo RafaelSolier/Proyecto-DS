@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
 @Entity
+@Table(name = "consultorioServicioUsuario", schema = "medic")
 @Data
 @RequiredArgsConstructor
 public class ConsultorioServicioU {
