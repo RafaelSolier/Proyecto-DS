@@ -4,7 +4,6 @@ import com.habimed.habimedWebService.cita.domain.model.Cita;
 import com.habimed.habimedWebService.consultorio.domain.model.Consultorio;
 import com.habimed.habimedWebService.horarioDoctor.domain.model.HorarioDoctor;
 import com.habimed.habimedWebService.persona.domain.model.Persona;
-import com.habimed.habimedWebService.usuario.domain.model.TipoUsuarioEnum;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -23,7 +22,7 @@ public class Usuario {
     private Integer idUsuario;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "dnipersona", referencedColumnName = "dni", insertable = false, updatable = false)
+    @JoinColumn(name = "idpersona", referencedColumnName = "id", insertable = false, updatable = false)
     private Persona persona;
 
     @Column(name = "tipousuario", nullable = false)
@@ -56,5 +55,5 @@ public class Usuario {
     @JoinColumn(name = "idconsultorio", referencedColumnName = "idconsultorio", insertable = false, updatable = false, nullable = true)
     private Consultorio consultorio;
 
-    // Falta
+    // Falta Relación con
 }
