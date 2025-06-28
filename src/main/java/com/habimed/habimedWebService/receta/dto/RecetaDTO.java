@@ -1,15 +1,17 @@
 package com.habimed.habimedWebService.receta.dto;
 
-import com.habimed.habimedWebService.cita.dto.CitaDTO;
-import com.habimed.habimedWebService.receta.domain.model.Receta;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class RecetaDTO {
-    private Receta receta;
-    private CitaDTO cita;
+    private Long idReceta;
+    private Long idCita;
+    private String descripcion;
+    private LocalDate fechaReceta;
 }

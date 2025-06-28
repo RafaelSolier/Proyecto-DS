@@ -18,7 +18,7 @@ public class Diagnostico {
     private Integer idDiagnostico;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "idcita", referencedColumnName = "idcita", nullable = false)
+    @JoinColumn(name = "idcita", referencedColumnName = "idcita", insertable = false, updatable = false)
     private Cita cita;
 
     @Column(name = "descripcion", nullable = false, length = 1000)

@@ -7,9 +7,12 @@ import com.habimed.habimedWebService.recomendacion.domain.model.Recomendacion;
 import com.habimed.habimedWebService.servicio.domain.model.Servicio;
 import com.habimed.habimedWebService.usuario.domain.model.Usuario;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+
 import java.util.List;
 
 @Entity
@@ -24,37 +27,29 @@ public class Cita {
     private Integer idCita;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "idpaciente", referencedColumnName = "idusuario", nullable = false)
+    @JoinColumn(name = "idpaciente", referencedColumnName = "idusuario", insertable = false, updatable = false)
     private Usuario paciente;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "iddoctor", referencedColumnName = "idusuario", nullable = false)
+    @JoinColumn(name = "iddoctor", referencedColumnName = "idusuario", insertable = false, updatable = false)
     private Usuario doctor;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "idservicio", referencedColumnName = "idservicio", nullable = false)
-    private Servicio servicio;
-
-    @Column(name = "motivo", nullable = false, length = 500)
+    @Column(name = "motivo", nullable = false, length = 255)
     private String motivo;
 
     @Column(name = "fecha_hora_inicio", nullable = false)
     private LocalDateTime fechaHoraInicio;
 
-    @Column(name = "fecha_hora_fin", nullable = false)
+    @Column(name = "fecha_hora_fin")
     private LocalDateTime fechaHoraFin;
 
     @Column(name = "estado", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private EstadoCitaEnum estado = EstadoCitaEnum.SOLICITADA;
+    private EstadoCitaEnum estado;
 
-    @Column(name = "descripcion", length = 1000)
+    @Column(name = "descripcion", length = 500)
     private String descripcion;
 
-    // agregar motivo de cancelación de cita
-
-
-    // Relaciones inversas
+    // Relaciones One-to-Many
     @OneToMany(mappedBy = "cita", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Diagnostico> diagnosticos;
 
@@ -64,6 +59,11 @@ public class Cita {
     @OneToMany(mappedBy = "cita", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Recomendacion> recomendaciones;
 
+    // Relación One-to-One con DetallePago
     @OneToOne(mappedBy = "cita", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private DetallePago detallePago;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "idservicio", referencedColumnName = "idservicio", insertable = false, updatable = false)
+    private Servicio servicio;
 }
