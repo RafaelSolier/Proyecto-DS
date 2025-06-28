@@ -98,7 +98,7 @@ public class RecomendacionServiceImpl implements RecomendacionService {
             throw new RuntimeException("No se puede crear una recomendación para una cita cancelada");
         }
         
-        if (citaEntity.getEstado() == EstadoCitaEnum.PROGRAMADA && 
+        if (citaEntity.getEstado() == EstadoCitaEnum.ACEPTADA &&
             citaEntity.getFechaHoraInicio() != null && 
             citaEntity.getFechaHoraInicio().toLocalDate().isAfter(LocalDate.now())) {
             throw new RuntimeException("No se puede crear una recomendación para una cita que aún no ha ocurrido");
@@ -175,7 +175,7 @@ public class RecomendacionServiceImpl implements RecomendacionService {
             }
             
             // Verificar que la cita asociada no esté completada hace mucho tiempo
-            if (recomendacion.getCita() != null && recomendacion.getCita().getEstado() == EstadoCitaEnum.COMPLETADA &&
+            if (recomendacion.getCita() != null && recomendacion.getCita().getEstado() == EstadoCitaEnum.REALIZADA &&
                 recomendacion.getCita().getFechaHoraFin() != null &&
                 recomendacion.getCita().getFechaHoraFin().toLocalDate().isBefore(LocalDate.now().minusDays(30))) {
                 throw new RuntimeException("No se puede modificar una recomendación de una cita completada hace más de 30 días");
@@ -245,7 +245,7 @@ public class RecomendacionServiceImpl implements RecomendacionService {
             if (recomendacionEntity.getCita() != null) {
                 Cita cita = recomendacionEntity.getCita();
                 
-                if (cita.getEstado() == EstadoCitaEnum.COMPLETADA && 
+                if (cita.getEstado() == EstadoCitaEnum.REALIZADA &&
                     cita.getFechaHoraFin() != null &&
                     cita.getFechaHoraFin().toLocalDate().isBefore(LocalDate.now().minusDays(7))) {
                     throw new RuntimeException("No se puede eliminar una recomendación de una cita completada hace más de 7 días");

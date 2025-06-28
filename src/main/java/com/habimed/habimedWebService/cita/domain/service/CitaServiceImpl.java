@@ -130,7 +130,7 @@ public class CitaServiceImpl implements CitaService {
         
         // Establecer estado por defecto si no se proporciona
         if (cita.getEstado() == null) {
-            cita.setEstado(EstadoCitaEnum.PROGRAMADA);
+            cita.setEstado(EstadoCitaEnum.SOLICITADA);
         }
         
         Cita savedCita = citaRepository.save(cita);
@@ -186,8 +186,8 @@ public class CitaServiceImpl implements CitaService {
             Cita citaEntity = cita.get();
             
             // Validar si la cita puede ser eliminada según su estado
-            if (citaEntity.getEstado() == EstadoCitaEnum.COMPLETADA) {
-                throw new RuntimeException("No se puede eliminar una cita que ya fue completada");
+            if (citaEntity.getEstado() == EstadoCitaEnum.REALIZADA || citaEntity.getEstado() == EstadoCitaEnum.CANCELADA) {
+                throw new RuntimeException("No se puede eliminar una cita que ya fue completada o cancelada");
             }
             
             // Verificar si tiene relaciones dependientes

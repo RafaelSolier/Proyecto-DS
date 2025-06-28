@@ -102,7 +102,7 @@ public class RecetaServiceImpl implements RecetaService {
             throw new RuntimeException("No se puede crear una receta para una cita cancelada");
         }
         
-        if (citaEntity.getEstado() == EstadoCitaEnum.PROGRAMADA && 
+        if (citaEntity.getEstado() == EstadoCitaEnum.ACEPTADA &&
             citaEntity.getFechaHoraInicio() != null && 
             citaEntity.getFechaHoraInicio().toLocalDate().isAfter(LocalDate.now())) {
             throw new RuntimeException("No se puede crear una receta para una cita que aún no ha ocurrido");
@@ -179,7 +179,7 @@ public class RecetaServiceImpl implements RecetaService {
             }
             
             // Verificar que la cita asociada no esté completada hace mucho tiempo
-            if (receta.getCita() != null && receta.getCita().getEstado() == EstadoCitaEnum.COMPLETADA &&
+            if (receta.getCita() != null && receta.getCita().getEstado() == EstadoCitaEnum.REALIZADA &&
                 receta.getCita().getFechaHoraFin() != null &&
                 receta.getCita().getFechaHoraFin().toLocalDate().isBefore(LocalDate.now().minusDays(30))) {
                 throw new RuntimeException("No se puede modificar una receta de una cita completada hace más de 30 días");
@@ -236,7 +236,7 @@ public class RecetaServiceImpl implements RecetaService {
             if (recetaEntity.getCita() != null) {
                 Cita cita = recetaEntity.getCita();
                 
-                if (cita.getEstado() == EstadoCitaEnum.COMPLETADA && 
+                if (cita.getEstado() == EstadoCitaEnum.REALIZADA &&
                     cita.getFechaHoraFin() != null &&
                     cita.getFechaHoraFin().toLocalDate().isBefore(LocalDate.now().minusDays(7))) {
                     throw new RuntimeException("No se puede eliminar una receta de una cita completada hace más de 7 días");

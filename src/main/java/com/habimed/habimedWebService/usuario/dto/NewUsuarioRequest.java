@@ -1,7 +1,6 @@
 package com.habimed.habimedWebService.usuario.dto;
 
-import com.habimed.habimedWebService.persona.dto.PersonaRequest;
-import com.habimed.parameterREST.RequestREST;
+import com.habimed.habimedWebService.persona.dto.PersonaInsertDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,6 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class NewUsuarioRequest {
-    private PersonaRequest persona;
-    private UsuarioRequest usuario;
+    private PersonaInsertDto persona;
+    private UsuarioInsertDto usuario;
 }
