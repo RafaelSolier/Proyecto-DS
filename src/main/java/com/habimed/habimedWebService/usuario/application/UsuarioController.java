@@ -20,24 +20,24 @@ public class UsuarioController {
     final private UsuarioService usuarioService;
 
     @GetMapping
-    public ResponseEntity<List<Usuario>> getAllUsuarios() {
+    public ResponseEntity<List<UsuarioResponseDto>> getAllUsuarios() {
         try {
-            List<Usuario> usuarios = usuarioService.findAll();
+            List<UsuarioResponseDto> usuarios = usuarioService.findAll();
             return ResponseEntity.ok(usuarios);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
-    @PostMapping("/filter")
-    public ResponseEntity<List<Usuario>> getUsuariosWithFilter(@Valid @RequestBody UsuarioFilterDto filterDto) {
-        try {
-            List<Usuario> usuarios = usuarioService.findAllWithConditions(filterDto);
-            return ResponseEntity.ok(usuarios);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
+//    @PostMapping("/filter")
+//    public ResponseEntity<List<Usuario>> getUsuariosWithFilter(@Valid @RequestBody UsuarioFilterDto filterDto) {
+//        try {
+//            List<Usuario> usuarios = usuarioService.findAllWithConditions(filterDto);
+//            return ResponseEntity.ok(usuarios);
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+//        }
+//    }
 
     @GetMapping("/{id}")
     public ResponseEntity<UsuarioResponseDto> getUsuarioById(@PathVariable Integer id) {

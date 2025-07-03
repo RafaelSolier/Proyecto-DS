@@ -7,10 +7,9 @@ import lombok.Data;
 @Data
 public class UsuarioResponseDto {
     private Integer idUsuario;
-    private Long dniPersona;
-    private PersonaResponseDto persona;
-
+    private Integer idPersona;
     private TipoUsuarioEnum tipoUsuario;
     private String correo;
     private Boolean estado;
+    private String codigoCMP;
 }

@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class UsuarioFilterDto {
-    private Long dniPersona;
+    private Integer dniPersona;
     private Integer tipoUsuarioId;
     private String usuario;
     private Boolean estado;

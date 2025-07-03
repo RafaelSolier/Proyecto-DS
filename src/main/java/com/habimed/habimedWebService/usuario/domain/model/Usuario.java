@@ -2,6 +2,7 @@ package com.habimed.habimedWebService.usuario.domain.model;
 
 import com.habimed.habimedWebService.cita.domain.model.Cita;
 import com.habimed.habimedWebService.consultorio.domain.model.Consultorio;
+import com.habimed.habimedWebService.consultorioServicioU.domain.model.ConsultorioServicioU;
 import com.habimed.habimedWebService.horarioDoctor.domain.model.HorarioDoctor;
 import com.habimed.habimedWebService.persona.domain.model.Persona;
 
@@ -29,7 +30,7 @@ public class Usuario {
     @Enumerated(EnumType.STRING)
     private TipoUsuarioEnum tipoUsuario;
 
-    @Column(name = "correo", nullable = false, length = 50)
+    @Column(name = "correo", nullable = false, length = 50, unique = true)
     private String correo;
 
     @Column(name = "contrasenia", nullable = false)
@@ -48,12 +49,6 @@ public class Usuario {
     @OneToMany(mappedBy = "paciente", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Cita> citasComoPaciente;
 
-    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Cita> citasComoDoctor;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "idconsultorio", referencedColumnName = "idconsultorio", insertable = false, updatable = false, nullable = true)
-    private Consultorio consultorio;
-
-    // Falta Relación con
+    @OneToMany(mappedBy = "consultorio", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ConsultorioServicioU> consultorioServicioU;
 }

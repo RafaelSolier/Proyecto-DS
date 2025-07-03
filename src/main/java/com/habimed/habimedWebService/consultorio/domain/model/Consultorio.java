@@ -38,7 +38,6 @@ public class Consultorio {
     @Column(name = "estado", nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
     private Boolean estado = true; // true=activo, false=eliminado lógico
 
-    // Relación One-to-Many con Usuario (doctores)
     @OneToMany(mappedBy = "consultorio", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ConsultorioServicioU> consultorioServicioU;
 
