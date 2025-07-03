@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Pattern;
 @Data
 public class ConsultorioInsertDto {
     @Pattern(regexp = "^\\d{11}$", message = "El RUC debe tener 11 dígitos")
+    @NotBlank(message = "El RUC es obligatorio")
     private String ruc;
 
     @NotBlank(message = "El nombre es obligatorio")

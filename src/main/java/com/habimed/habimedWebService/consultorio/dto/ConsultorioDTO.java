@@ -9,18 +9,12 @@ import lombok.NoArgsConstructor;
 
 @Data
 public class ConsultorioDTO {
-    private Integer idconsultorio;
-
+    private Integer idConsultorio;
     private String ruc;
-
     private String nombre;
-
     private Double latitud;
-
     private Double longitud;
-
     private String direccion;
-
     private String telefono;
 
 }

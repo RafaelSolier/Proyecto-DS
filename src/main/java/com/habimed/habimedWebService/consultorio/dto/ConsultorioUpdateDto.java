@@ -14,9 +14,8 @@ public class ConsultorioUpdateDto {
     private String nombre;
 
     @Size(max = 45, message = "La longitud no puede exceder 45 caracteres")
-    private String longitud;
+    private Double longitud;
 
-    @NotBlank(message = "La latitud es obligatoria")
     @Size(max = 45, message = "La latitud no puede exceder 45 caracteres")
     private Double latitud;
 

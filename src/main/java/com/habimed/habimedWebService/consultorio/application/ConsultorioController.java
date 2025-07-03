@@ -21,14 +21,14 @@ public class ConsultorioController {
     private final ConsultorioService consultorioService;
 
     @GetMapping
-    public ResponseEntity<List<Consultorio>> getAllConsultorios() {
-        List<Consultorio> consultorios = consultorioService.findAll();
+    public ResponseEntity<List<ConsultorioResponseDto>> getAllConsultorios() {
+        List<ConsultorioResponseDto> consultorios = consultorioService.findAll();
         return ResponseEntity.ok(consultorios);
     }
 
     @PostMapping("/filter")
-    public ResponseEntity<List<Consultorio>> getAllConsultoriosWithConditions(@RequestBody ConsultorioFilterDto consultorioFilterDto) {
-        List<Consultorio> consultorios = consultorioService.findAllWithConditions(consultorioFilterDto);
+    public ResponseEntity<List<ConsultorioResponseDto>> getAllConsultoriosWithConditions(@RequestBody ConsultorioFilterDto consultorioFilterDto) {
+        List<ConsultorioResponseDto> consultorios = consultorioService.findAllWithConditions(consultorioFilterDto);
         return ResponseEntity.ok(consultorios);
     }
 
@@ -45,9 +45,8 @@ public class ConsultorioController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<ConsultorioResponseDto> updateConsultorio(
-            @PathVariable Integer id,
-            @Valid @RequestBody ConsultorioUpdateDto consultorioUpdateDto) {
+    public ResponseEntity<ConsultorioResponseDto> updateConsultorio(@PathVariable Integer id,
+                                                                    @Valid @RequestBody ConsultorioUpdateDto consultorioUpdateDto) {
         ConsultorioResponseDto consultorioActualizado = consultorioService.update(id, consultorioUpdateDto);
         return ResponseEntity.ok(consultorioActualizado);
     }
