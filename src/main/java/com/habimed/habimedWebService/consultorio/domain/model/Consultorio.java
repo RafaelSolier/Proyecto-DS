@@ -1,16 +1,12 @@
 package com.habimed.habimedWebService.consultorio.domain.model;
 
-import com.habimed.habimedWebService.diagnostico.domain.model.Diagnostico;
-import com.habimed.habimedWebService.servicio.domain.model.Servicio;
-import com.habimed.habimedWebService.usuario.domain.model.Usuario;
+import com.habimed.habimedWebService.consultorioServicioU.domain.model.ConsultorioServicioU;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.util.List;
 
 @Entity
-@Table(name = "consultorio", schema = "medic")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -27,8 +23,11 @@ public class Consultorio {
     @Column(name = "nombre", nullable = false)
     private String nombre;
 
-    @Column(name = "ubicacion", nullable = false)
-    private String ubicacion;
+    @Column(name = "latitud", nullable = false)
+    private Double latitud;
+
+    @Column(name = "longitud", nullable = false)
+    private Double longitud;
 
     @Column(name = "direccion", length = 45)
     private String direccion;
@@ -38,15 +37,6 @@ public class Consultorio {
 
     // Relación One-to-Many con Usuario (doctores)
     @OneToMany(mappedBy = "consultorio", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Usuario> doctores;
+    private List<ConsultorioServicioU> consultorioServicioU;
 
-    // Relación Many-to-Many con Servicio
-    @ManyToMany
-    @JoinTable(
-            name = "consultorio_has_servicio",
-            schema = "medic",
-            joinColumns = @JoinColumn(name = "idconsultorio"),
-            inverseJoinColumns = @JoinColumn(name = "idservicio")
-    )
-    private List<Servicio> servicios;
 }

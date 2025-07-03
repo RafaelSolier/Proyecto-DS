@@ -7,7 +7,8 @@ public class ConsultorioResponseDto {
     private Integer idConsultorio;
     private String ruc;
     private String nombre;
-    private String ubicacion;
+    private Double latitud;
+    private Double longitud;
     private String direccion;
     private String telefono;
 }

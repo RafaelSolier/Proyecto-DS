@@ -39,8 +39,8 @@ public class ConsultorioServiceImpl implements ConsultorioService {
         
         if (consultorioFilterDto.getUbicacion() != null && !consultorioFilterDto.getUbicacion().trim().isEmpty()) {
             consultorios = consultorios.stream()
-                    .filter(c -> c.getUbicacion() != null && 
-                            c.getUbicacion().toLowerCase().contains(consultorioFilterDto.getUbicacion().toLowerCase()))
+                    .filter(c -> c.getLatitud() != null &&
+                            c.getLatitud().toLowerCase().contains(consultorioFilterDto.getUbicacion().toLowerCase()))
                     .collect(Collectors.toList());
         }
         
@@ -80,9 +80,9 @@ public class ConsultorioServiceImpl implements ConsultorioService {
         // Verificar si ya existe un consultorio con el mismo nombre en la misma ubicación
         List<Consultorio> existingConsultorios = consultorioRepository.findAll();
         boolean duplicateExists = existingConsultorios.stream()
-                .anyMatch(c -> c.getNombre() != null && c.getUbicacion() != null &&
+                .anyMatch(c -> c.getNombre() != null && c.getLatitud() != null &&
                         c.getNombre().equalsIgnoreCase(consultorioInsertDto.getNombre()) &&
-                        c.getUbicacion().equalsIgnoreCase(consultorioInsertDto.getUbicacion()));
+                        c.getLatitud().equalsIgnoreCase(consultorioInsertDto.getUbicacion()));
         
         if (duplicateExists) {
             throw new RuntimeException("Ya existe un consultorio con el nombre '" + 
@@ -124,7 +124,7 @@ public class ConsultorioServiceImpl implements ConsultorioService {
                 consultorio.setNombre(consultorioUpdateDto.getNombre());
             }
             if (consultorioUpdateDto.getUbicacion() != null && !consultorioUpdateDto.getUbicacion().trim().isEmpty()) {
-                consultorio.setUbicacion(consultorioUpdateDto.getUbicacion());
+                consultorio.setLatitud(consultorioUpdateDto.getUbicacion());
             }
             if (consultorioUpdateDto.getDireccion() != null && !consultorioUpdateDto.getDireccion().trim().isEmpty()) {
                 consultorio.setDireccion(consultorioUpdateDto.getDireccion());

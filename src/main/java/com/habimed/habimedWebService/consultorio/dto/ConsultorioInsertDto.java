@@ -14,9 +14,13 @@ public class ConsultorioInsertDto {
     @Size(max = 45, message = "El nombre no puede exceder 45 caracteres")
     private String nombre;
 
-    @NotBlank(message = "La ubicación es obligatoria")
-    @Size(max = 45, message = "La ubicación no puede exceder 45 caracteres")
-    private String ubicacion;
+    @NotBlank(message = "La latitud es obligatoria")
+    @Size(max = 45, message = "La latitud no puede exceder 45 caracteres")
+    private Double latitud;
+
+    @NotBlank(message = "La longitud es obligatoria")
+    @Size(max = 45, message = "La longitud no puede exceder 45 caracteres")
+    private Double longitud;
 
     @Size(max = 45, message = "La dirección no puede exceder 45 caracteres")
     private String direccion;

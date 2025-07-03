@@ -5,6 +5,7 @@ import lombok.Data;
 @Data
 public class ConsultorioFilterDto {
     private String nombre;
-    private String ubicacion;
+    private Double latitud;
+    private Double longitud;
     private String ruc;
 }
