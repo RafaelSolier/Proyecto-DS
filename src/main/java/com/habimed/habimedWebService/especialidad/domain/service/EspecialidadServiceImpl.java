@@ -1,5 +1,9 @@
 package com.habimed.habimedWebService.especialidad.domain.service;
 
+import com.habimed.habimedWebService.servicio.domain.model.Servicio;
+import com.habimed.habimedWebService.servicio.domain.service.ServicioService;
+import com.habimed.habimedWebService.servicio.dto.ServicioFilterDto;
+import com.habimed.habimedWebService.servicio.dto.ServicioResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -18,6 +22,7 @@ public class EspecialidadServiceImpl implements EspecialidadService {
 
     private final EspecialidadRepository especialidadRepository;
     private final ModelMapper modelMapper;
+    private final ServicioService servicioService;
 
     @Override
     public List<Especialidad> findAll() {
@@ -26,10 +31,9 @@ public class EspecialidadServiceImpl implements EspecialidadService {
 
     @Override
     public List<Especialidad> findAllWithConditions(EspecialidadFilterDto especialidadFilterDto) {
-        // IMPLEMENTACIÓN TEMPORAL (reemplazar con consultas personalizadas del repositorio):
+
         List<Especialidad> especialidades = especialidadRepository.findAll();
-        
-        // Filtrar por campos del FilterDto si no son null
+
         if (especialidadFilterDto.getIdEspecialidad() != null) {
             especialidades = especialidades.stream()
                     .filter(e -> e.getIdEspecialidad().equals(especialidadFilterDto.getIdEspecialidad()))
@@ -59,18 +63,14 @@ public class EspecialidadServiceImpl implements EspecialidadService {
     public EspecialidadResponseDto getById(Integer id) {
         Optional<Especialidad> especialidad = especialidadRepository.findById(id);
         if (especialidad.isPresent()) {
-            return mapToResponseDto(especialidad.get());
+            return modelMapper.map(especialidad.get(), EspecialidadResponseDto.class);
         }
         throw new RuntimeException("Especialidad no encontrada con ID: " + id);
     }
 
     @Override
     public EspecialidadResponseDto save(EspecialidadInsertDto especialidadInsertDto) {
-        // Validaciones específicas del contexto de Especialidad
-        if (especialidadInsertDto.getNombre() == null || especialidadInsertDto.getNombre().trim().isEmpty()) {
-            throw new RuntimeException("El nombre de la especialidad es obligatorio");
-        }
-        
+
         // Verificar que no exista ya una especialidad con el mismo nombre (case insensitive)
         List<Especialidad> existingEspecialidades = especialidadRepository.findAll();
         boolean nombreExists = existingEspecialidades.stream()
@@ -81,12 +81,9 @@ public class EspecialidadServiceImpl implements EspecialidadService {
             throw new RuntimeException("Ya existe una especialidad con el nombre: " + 
                     especialidadInsertDto.getNombre());
         }
-        
-        // Normalizar el nombre (capitalizar primera letra de cada palabra)
-        String nombreNormalizado = capitalizarNombre(especialidadInsertDto.getNombre().trim());
-        
+
         Especialidad especialidad = modelMapper.map(especialidadInsertDto, Especialidad.class);
-        especialidad.setNombre(nombreNormalizado);
+        especialidad.setNombre(especialidadInsertDto.getNombre());
         
         // Normalizar descripción si existe
         if (especialidad.getDescripcion() != null && !especialidad.getDescripcion().trim().isEmpty()) {
@@ -94,7 +91,7 @@ public class EspecialidadServiceImpl implements EspecialidadService {
         }
         
         Especialidad savedEspecialidad = especialidadRepository.save(especialidad);
-        return mapToResponseDto(savedEspecialidad);
+        return modelMapper.map(savedEspecialidad, EspecialidadResponseDto.class);
     }
 
     @Override
@@ -123,8 +120,7 @@ public class EspecialidadServiceImpl implements EspecialidadService {
             
             // Actualizar solo los campos que no son null en el DTO
             if (especialidadUpdateDto.getNombre() != null && !especialidadUpdateDto.getNombre().trim().isEmpty()) {
-                String nombreNormalizado = capitalizarNombre(especialidadUpdateDto.getNombre().trim());
-                especialidad.setNombre(nombreNormalizado);
+                especialidad.setNombre(especialidadUpdateDto.getNombre().trim());
             }
             
             if (especialidadUpdateDto.getDescripcion() != null) {
@@ -136,7 +132,7 @@ public class EspecialidadServiceImpl implements EspecialidadService {
             }
             
             Especialidad updatedEspecialidad = especialidadRepository.save(especialidad);
-            return mapToResponseDto(updatedEspecialidad);
+            return modelMapper.map(updatedEspecialidad, EspecialidadResponseDto.class);
         }
         
         throw new RuntimeException("Especialidad no encontrada con ID: " + id);
@@ -151,50 +147,22 @@ public class EspecialidadServiceImpl implements EspecialidadService {
             
             // Verificar si tiene servicios asociados antes de eliminar
             if (especialidadEntity.getServicios() != null && !especialidadEntity.getServicios().isEmpty()) {
-                throw new RuntimeException("No se puede eliminar la especialidad '" + 
-                        especialidadEntity.getNombre() + "' porque tiene servicios asociados");
+                ServicioFilterDto servicioFilterDto = new ServicioFilterDto();
+                servicioFilterDto.setIdEspecialidad(especialidadEntity.getIdEspecialidad());
+                List<ServicioResponseDto> servicios = servicioService.findAllWithConditions(servicioFilterDto);
+                if (!servicios.isEmpty()) {  // Verifica si la lista no está vacía
+                    servicios.forEach(relacion -> {
+                        servicioService.delete(relacion.getIdServicio());  // Ejecuta delete para cada ID
+                    });
+                }
             }
             
             especialidadRepository.deleteById(id);
-            return true;
+            return Boolean.TRUE;
         }
         
-        return false;
+        return Boolean.FALSE;
     }
 
-    // Método helper para mapear a ResponseDto con información adicional
-    private EspecialidadResponseDto mapToResponseDto(Especialidad especialidad) {
-        EspecialidadResponseDto responseDto = modelMapper.map(especialidad, EspecialidadResponseDto.class);
-        
-        // Agregar información adicional como la cantidad de servicios
-        if (especialidad.getServicios() != null) {
-            responseDto.setCantidadServicios(especialidad.getServicios().size());
-        } else {
-            responseDto.setCantidadServicios(0);
-        }
-        
-        return responseDto;
-    }
 
-    // Método helper para capitalizar nombres
-    private String capitalizarNombre(String nombre) {
-        if (nombre == null || nombre.trim().isEmpty()) {
-            return nombre;
-        }
-        
-        String[] palabras = nombre.toLowerCase().split("\\s+");
-        StringBuilder resultado = new StringBuilder();
-        
-        for (int i = 0; i < palabras.length; i++) {
-            if (i > 0) {
-                resultado.append(" ");
-            }
-            if (!palabras[i].isEmpty()) {
-                resultado.append(Character.toUpperCase(palabras[i].charAt(0)))
-                         .append(palabras[i].substring(1));
-            }
-        }
-        
-        return resultado.toString();
-    }
 }

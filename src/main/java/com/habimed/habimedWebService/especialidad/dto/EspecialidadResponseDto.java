@@ -11,5 +11,4 @@ public class EspecialidadResponseDto {
     private Integer idEspecialidad;
     private String nombre;
     private String descripcion;
-    private Integer cantidadServicios;
 }

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/conseruser")
+@RequestMapping("/api/conseruser")
 @RequiredArgsConstructor
 public class ConsultorioServicioUController {
     private final ConsultorioServicioUService consultorioServicioUService;
