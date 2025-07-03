@@ -1,5 +1,8 @@
 package com.habimed.habimedWebService.usuario.dto;
 
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.Data;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.NotBlank;
@@ -7,8 +10,12 @@ import jakarta.validation.constraints.Size;
 
 @Data
 public class UsuarioInsertDto {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer idPersona;
+
     @NotNull(message = "El DNI de la persona es obligatorio")
-    private Long dniPersona;
+    private String dniPersona;
 
     @NotNull(message = "El tipo de usuario es obligatorio")
     private Integer tipoUsuarioId;

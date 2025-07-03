@@ -92,9 +92,9 @@ public class UsuarioServiceImpl implements UsuarioService {
         }
         
         // Verificar que la persona existe
-        Optional<Persona> persona = personaRepository.findById(usuarioInsertDto.getDniPersona());
+        Optional<Persona> persona = personaRepository.findById(usuarioInsertDto.getIdPersona());
         if (!persona.isPresent()) {
-            throw new RuntimeException("No existe una persona con DNI: " + usuarioInsertDto.getDniPersona());
+            throw new RuntimeException("No existe una persona con DNI: " + usuarioInsertDto.getIdPersona());
         }
         
         Persona personaEntity = persona.get();
