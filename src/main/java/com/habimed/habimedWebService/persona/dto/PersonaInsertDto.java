@@ -10,8 +10,9 @@ import java.time.LocalDate;
 
 @Data
 public class PersonaInsertDto {
-    @NotNull(message = "El DNI es obligatorio")
-    private Long dni;
+    @NotBlank(message = "El DNI es obligatorio")
+    @Pattern(regexp = "^\\d{8}$", message = "El DNI debe tener exactamente 8 dígitos")
+    private String dni;
 
     @NotBlank(message = "Los nombres son obligatorios")
     @Size(max = 45, message = "Los nombres no pueden exceder 45 caracteres")
