@@ -38,10 +38,10 @@ public class PersonasController {
         }
     }
 
-    @GetMapping("/{dni}")
-    public ResponseEntity<PersonaResponseDto> getPersonaByDni(@PathVariable Long dni) {
+    @GetMapping("/{id}")
+    public ResponseEntity<PersonaResponseDto> getPersonaByDni(@PathVariable Integer id) {
         try {
-            PersonaResponseDto persona = personaService.getById(dni);
+            PersonaResponseDto persona = personaService.getById(id);
             if (persona != null) {
                 return ResponseEntity.ok(persona);
             } else {
@@ -62,12 +62,12 @@ public class PersonasController {
         }
     }
 
-    @PatchMapping("/{dni}")
+    @PatchMapping("/{id}")
     public ResponseEntity<PersonaResponseDto> updatePersona(
-            @PathVariable Long dni,
+            @PathVariable Integer id,
             @Valid @RequestBody PersonaUpdateDto personaUpdateDto) {
         try {
-            PersonaResponseDto updatedPersona = personaService.update(dni, personaUpdateDto);
+            PersonaResponseDto updatedPersona = personaService.update(id, personaUpdateDto);
             if (updatedPersona != null) {
                 return ResponseEntity.ok(updatedPersona);
             } else {
@@ -78,10 +78,10 @@ public class PersonasController {
         }
     }
 
-    @DeleteMapping("/{dni}")
-    public ResponseEntity<Void> deletePersona(@PathVariable Long dni) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletePersona(@PathVariable Integer id) {
         try {
-            Boolean deleted = personaService.delete(dni);
+            Boolean deleted = personaService.delete(id);
             if (deleted) {
                 return ResponseEntity.noContent().build();
             } else {

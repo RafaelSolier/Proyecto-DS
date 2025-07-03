@@ -131,15 +131,7 @@ public class PersonaServiceImpl implements PersonaService {
                 if (tieneCitasComoPaciente) {
                     throw new RuntimeException("No se puede eliminar la persona porque tiene citas médicas asociadas como paciente");
                 }
-                
-                // Verificar si tiene citas como doctor
-                boolean tieneCitasComoDoctor = personaEntity.getUsuarios().stream()
-                        .anyMatch(usuario -> usuario.getCitasComoDoctor() != null && 
-                                !usuario.getCitasComoDoctor().isEmpty());
-                
-                if (tieneCitasComoDoctor) {
-                    throw new RuntimeException("No se puede eliminar la persona porque tiene citas médicas asociadas como doctor");
-                }
+
                 
                 personaRepository.deleteById(idPersona);
                 return Boolean.TRUE;
