@@ -20,9 +20,9 @@ public class ServicioController {
     final private ServicioService servicioService;
 
     @GetMapping
-    public ResponseEntity<List<Servicio>> getAllServicios() {
+    public ResponseEntity<List<ServicioResponseDto>> getAllServicios() {
         try {
-            List<Servicio> servicios = servicioService.findAll();
+            List<ServicioResponseDto> servicios = servicioService.findAll();
             return ResponseEntity.ok(servicios);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -30,9 +30,9 @@ public class ServicioController {
     }
 
     @PostMapping("/filter")
-    public ResponseEntity<List<Servicio>> getServiciosWithFilter(@Valid @RequestBody ServicioFilterDto filterDto) {
+    public ResponseEntity<List<ServicioResponseDto>> getServiciosWithFilter(@Valid @RequestBody ServicioFilterDto filterDto) {
         try {
-            List<Servicio> servicios = servicioService.findAllWithConditions(filterDto);
+            List<ServicioResponseDto> servicios = servicioService.findAllWithConditions(filterDto);
             return ResponseEntity.ok(servicios);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -40,9 +40,9 @@ public class ServicioController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ServicioResponseDto> getServicioById(@PathVariable Integer id) {
+    public ResponseEntity<Servicio> getServicioById(@PathVariable Integer id){
         try {
-            ServicioResponseDto servicio = servicioService.getById(id);
+            Servicio servicio = servicioService.getById(id);
             if (servicio != null) {
                 return ResponseEntity.ok(servicio);
             } else {
@@ -64,16 +64,11 @@ public class ServicioController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ServicioResponseDto> updateServicio(
-            @PathVariable Integer id,
-            @Valid @RequestBody ServicioUpdateDto servicioUpdateDto) {
+    public ResponseEntity<ServicioResponseDto> updateServicio(@PathVariable Integer id,
+                                                              @Valid @RequestBody ServicioUpdateDto servicioUpdateDto) {
         try {
             ServicioResponseDto updatedServicio = servicioService.update(id, servicioUpdateDto);
-            if (updatedServicio != null) {
-                return ResponseEntity.ok(updatedServicio);
-            } else {
-                return ResponseEntity.notFound().build();
-            }
+            return ResponseEntity.ok(updatedServicio);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }

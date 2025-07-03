@@ -2,6 +2,7 @@ package com.habimed.habimedWebService.servicio.domain.model;
 
 import com.habimed.habimedWebService.cita.domain.model.Cita;
 import com.habimed.habimedWebService.consultorio.domain.model.Consultorio;
+import com.habimed.habimedWebService.consultorioServicioU.domain.model.ConsultorioServicioU;
 import com.habimed.habimedWebService.especialidad.domain.model.Especialidad;
 import com.habimed.habimedWebService.receta.domain.model.Receta;
 import jakarta.persistence.*;
@@ -33,9 +34,6 @@ public class Servicio {
     @Column(name = "riesgos", length = 500)
     private String riesgos;
 
-    @ManyToMany(mappedBy = "servicios")
-    private List<Consultorio> consultorios;
-
-    @OneToMany(mappedBy = "servicio", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Cita> citas;
+    @OneToMany(mappedBy = "consultorio", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ConsultorioServicioU> consultorioServicioU;
 }

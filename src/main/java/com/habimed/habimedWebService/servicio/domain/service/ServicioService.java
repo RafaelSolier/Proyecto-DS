@@ -6,9 +6,9 @@ import com.habimed.habimedWebService.servicio.domain.model.Servicio;
 import com.habimed.habimedWebService.servicio.dto.*;
 
 public interface ServicioService {
-    List<Servicio> findAll();
-    List<Servicio> findAllWithConditions(ServicioFilterDto servicioFilterDto);
-    ServicioResponseDto getById(Integer id);
+    List<ServicioResponseDto> findAll();
+    List<ServicioResponseDto> findAllWithConditions(ServicioFilterDto servicioFilterDto);
+    Servicio getById(Integer id);
     ServicioResponseDto save(ServicioInsertDto servicioInsertDto);
     Boolean delete(Integer id);
     ServicioResponseDto update(Integer id, ServicioUpdateDto servicioUpdateDto);
