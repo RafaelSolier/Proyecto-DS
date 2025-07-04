@@ -1,6 +1,5 @@
 package com.habimed.habimedWebService.usuario.dto;
 
-import com.habimed.habimedWebService.persona.dto.PersonaResponseDto;
 import com.habimed.habimedWebService.usuario.domain.model.TipoUsuarioEnum;
 import lombok.Data;
 

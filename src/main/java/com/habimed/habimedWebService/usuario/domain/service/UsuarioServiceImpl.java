@@ -4,7 +4,6 @@ import com.habimed.habimedWebService.persona.domain.model.Persona;
 import com.habimed.habimedWebService.persona.repository.PersonaRepository;
 import com.habimed.habimedWebService.usuario.domain.model.TipoUsuarioEnum;
 import com.habimed.habimedWebService.usuario.domain.model.Usuario;
-import com.habimed.habimedWebService.usuario.dto.UsuarioFilterDto;
 import com.habimed.habimedWebService.usuario.dto.UsuarioInsertDto;
 import com.habimed.habimedWebService.usuario.dto.UsuarioResponseDto;
 import com.habimed.habimedWebService.usuario.dto.UsuarioUpdateDto;
@@ -15,10 +14,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
