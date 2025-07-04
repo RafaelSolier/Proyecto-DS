@@ -15,6 +15,4 @@ public class HorarioDoctorFilterDto {
     private LocalTime horaInicio;
 
     private LocalTime horaFin;
-
-    private Integer duracionMinutos;
 }

@@ -5,8 +5,6 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import java.sql.Time;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -25,6 +23,4 @@ public class HorarioDoctorInsertDto {
 
     @NotNull(message = "La hora de fin es obligatoria")
     private LocalDateTime horaFin;
-
-    private Integer duracionMinutos; // Se calcula automáticamente
 }
