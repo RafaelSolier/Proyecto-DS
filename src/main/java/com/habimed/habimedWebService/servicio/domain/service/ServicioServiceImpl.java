@@ -15,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -96,7 +95,7 @@ public class ServicioServiceImpl implements ServicioService {
         
         Servicio servicio = modelMapper.map(servicioInsertDto, Servicio.class);
         servicio.setEspecialidad(especialidadEntity);
-        
+        servicio.setIdServicio(null); 
         Servicio savedServicio = servicioRepository.save(servicio);
         ServicioResponseDto responseDto = modelMapper.map(savedServicio, ServicioResponseDto.class);
         responseDto.setIdEspecialidad(savedServicio.getEspecialidad().getIdEspecialidad());
