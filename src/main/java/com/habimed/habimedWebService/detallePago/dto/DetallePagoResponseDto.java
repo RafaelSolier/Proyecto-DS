@@ -14,5 +14,4 @@ public class DetallePagoResponseDto {
     private BigDecimal monto;
     private MetodoPagoEnum metodoPago;
     private EstadoPagoEnum estadoPago;
-    private LocalDateTime fechaPago;
 }

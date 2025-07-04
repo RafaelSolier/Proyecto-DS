@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 
 @Data
 public class DetallePagoUpdateDto {
-    private Integer idDetallePago;
 
     @DecimalMin(value = "0.0", inclusive = false, message = "El monto debe ser mayor a 0")
     @Digits(integer = 10, fraction = 2, message = "El monto debe tener máximo 10 dígitos enteros y 2 decimales")
@@ -22,7 +21,4 @@ public class DetallePagoUpdateDto {
 
     private EstadoPagoEnum estadoPago;
 
-    private LocalDateTime fechaPago;
-
-    private Cita cita;
 }

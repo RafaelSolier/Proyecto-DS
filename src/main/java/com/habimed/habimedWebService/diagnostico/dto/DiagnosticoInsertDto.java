@@ -1,11 +1,14 @@
 package com.habimed.habimedWebService.diagnostico.dto;
 
+import jakarta.persistence.Column;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+
+import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
@@ -17,4 +20,7 @@ public class DiagnosticoInsertDto {
     @NotBlank(message = "La descripción es obligatoria")
     @Size(max = 1000, message = "La descripción no puede exceder los 1000 caracteres")
     private String descripcion;
+
+    @NotBlank
+    private LocalDate fechaDiagnostico = LocalDate.now();
 }

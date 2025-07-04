@@ -30,6 +30,4 @@ public class DetallePagoCreateDto {
     @NotBlank(message = "El estado de pago no puede estar vacío")
     private EstadoPagoEnum estadoPago;
 
-    @NotNull(message = "La fecha de pago no puede ser nula")
-    private LocalDateTime fechaPago = LocalDateTime.now();
 }

@@ -7,7 +7,7 @@ import com.habimed.habimedWebService.diagnostico.dto.*;
 
 public interface DiagnosticoService {
     List<Diagnostico> findAll();
-    List<Diagnostico> findAllWithConditions(DiagnosticoFilterDto diagnosticoFilterDto);
+    // List<Diagnostico> findAllWithConditions(DiagnosticoFilterDto diagnosticoFilterDto);
     DiagnosticoResponseDto getById(Integer id);
     DiagnosticoResponseDto save(DiagnosticoInsertDto diagnosticoInsertDto);
     Boolean delete(Integer id);

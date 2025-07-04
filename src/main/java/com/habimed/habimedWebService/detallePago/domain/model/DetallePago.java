@@ -34,7 +34,5 @@ public class DetallePago {
     @Enumerated(EnumType.STRING)
     private EstadoPagoEnum estadoPago;
 
-    @Column(name = "fecha_pago", nullable = false)
-    private LocalDateTime fechaPago = LocalDateTime.now();
 }
 

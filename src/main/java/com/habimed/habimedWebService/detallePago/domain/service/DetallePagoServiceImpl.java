@@ -56,13 +56,7 @@ public class DetallePagoServiceImpl implements DetallePagoService {
                     .filter(dp -> dp.getEstadoPago().equals(detallePagoFilterDto.getEstadoPago()))
                     .collect(Collectors.toList());
         }
-        
-        if (detallePagoFilterDto.getFechaPago() != null) {
-            detallesPago = detallesPago.stream()
-                    .filter(dp -> dp.getFechaPago().toLocalDate().equals(detallePagoFilterDto.getFechaPago().toLocalDate()))
-                    .collect(Collectors.toList());
-        }
-        
+
         return detallesPago.stream()
                 .map(detallePago -> modelMapper.map(detallePago, DetallePago.class))
                 .collect(Collectors.toList());
@@ -100,12 +94,6 @@ public class DetallePagoServiceImpl implements DetallePagoService {
             }
             if (detallePagoUpdateDto.getEstadoPago() != null) {
                 detallePago.setEstadoPago(detallePagoUpdateDto.getEstadoPago());
-            }
-            if (detallePagoUpdateDto.getFechaPago() != null) {
-                detallePago.setFechaPago(detallePagoUpdateDto.getFechaPago());
-            }
-            if (detallePagoUpdateDto.getCita() != null) {
-                detallePago.setCita(detallePagoUpdateDto.getCita());
             }
             
             DetallePago updatedDetallePago = detallePagoRepository.save(detallePago);

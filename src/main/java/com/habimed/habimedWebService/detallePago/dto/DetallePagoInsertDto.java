@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 
 @Data
 public class DetallePagoInsertDto {
-    private Integer idDetallePago;
 
     @NotNull(message = "El monto es obligatorio")
     @DecimalMin(value = "0.0", inclusive = false, message = "El monto debe ser mayor a 0")
@@ -26,9 +25,6 @@ public class DetallePagoInsertDto {
     @NotNull(message = "El estado de pago es obligatorio")
     private EstadoPagoEnum estadoPago;
 
-    @NotNull(message = "La fecha de pago es obligatoria")
-    private LocalDateTime fechaPago;
-
     @NotNull(message = "La cita es obligatoria")
-    private Cita cita;
+    private Integer idCita;
 }
