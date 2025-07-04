@@ -9,15 +9,9 @@ import java.time.LocalDateTime;
 public class CitaFilterDto {
     private Integer idCita;
 
-    private Integer idServicio;
+    private Integer idConsultorioServicioU;
 
-    private Integer idConsultorio;
-
-    private Integer idMedico;
-
-    private Long dniPersona;
-
-    private String motivo;
+    private Integer idPersona;
 
     private LocalDateTime fechaHoraInicio;
 
@@ -25,5 +19,4 @@ public class CitaFilterDto {
 
     private EstadoCitaEnum estado;
 
-    private String descripcion;
 }

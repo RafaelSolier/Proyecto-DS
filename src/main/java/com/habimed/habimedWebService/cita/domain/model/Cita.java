@@ -1,5 +1,6 @@
 package com.habimed.habimedWebService.cita.domain.model;
 
+import com.habimed.habimedWebService.consultorioServicioU.domain.model.ConsultorioServicioU;
 import com.habimed.habimedWebService.detallePago.domain.model.DetallePago;
 import com.habimed.habimedWebService.diagnostico.domain.model.Diagnostico;
 import com.habimed.habimedWebService.receta.domain.model.Receta;
@@ -30,10 +31,6 @@ public class Cita {
     @JoinColumn(name = "idpaciente", referencedColumnName = "idusuario", insertable = false, updatable = false)
     private Usuario paciente;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "iddoctor", referencedColumnName = "idusuario", insertable = false, updatable = false)
-    private Usuario doctor;
-
     @Column(name = "motivo", nullable = false, length = 255)
     private String motivo;
 
@@ -48,6 +45,9 @@ public class Cita {
 
     @Column(name = "descripcion", length = 500)
     private String descripcion;
+
+    @Column(name = "motivoCancelacion", length = 500)
+    private String motivoCancelacion;
 
     // Relaciones One-to-Many
     @OneToMany(mappedBy = "cita", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -64,6 +64,6 @@ public class Cita {
     private DetallePago detallePago;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "idservicio", referencedColumnName = "idservicio", insertable = false, updatable = false)
-    private Servicio servicio;
+    @JoinColumn(name = "idconsultorioserviciouser", referencedColumnName = "idconsultorioserviciouser", nullable = false)
+    private ConsultorioServicioU consultorioServicioU;
 }

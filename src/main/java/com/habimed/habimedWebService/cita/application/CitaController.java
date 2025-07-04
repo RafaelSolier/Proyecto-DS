@@ -20,14 +20,14 @@ public class CitaController {
     private final CitaService citaService;
 
     @GetMapping
-    public ResponseEntity<List<Cita>> getAllCitas() {
-        List<Cita> citas = citaService.findAll();
+    public ResponseEntity<List<CitaResponseDto>> getAllCitas() {
+        List<CitaResponseDto> citas = citaService.findAll();
         return ResponseEntity.ok(citas);
     }
 
     @PostMapping("/filter")
-    public ResponseEntity<List<Cita>> getAllCitasWithConditions(@RequestBody CitaFilterDto citaFilterDto) {
-        List<Cita> citas = citaService.findAllWithConditions(citaFilterDto);
+    public ResponseEntity<List<CitaResponseDto>> getAllCitasWithConditions(@RequestBody CitaFilterDto citaFilterDto) {
+        List<CitaResponseDto> citas = citaService.findAllWithConditions(citaFilterDto);
         return ResponseEntity.ok(citas);
     }
 

@@ -34,6 +34,6 @@ public class Servicio {
     @Column(name = "riesgos", length = 500)
     private String riesgos;
 
-    @OneToMany(mappedBy = "consultorio", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "servicio", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ConsultorioServicioU> consultorioServicioU;
 }

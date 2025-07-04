@@ -1,5 +1,9 @@
 package com.habimed.habimedWebService.cita.domain.service;
 
+import com.habimed.habimedWebService.consultorioServicioU.domain.model.ConsultorioServicioU;
+import com.habimed.habimedWebService.consultorioServicioU.repository.ConsultorioServicioURepository;
+import com.habimed.habimedWebService.usuario.domain.model.Usuario;
+import com.habimed.habimedWebService.usuario.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -21,15 +25,18 @@ public class CitaServiceImpl implements CitaService {
 
     private final CitaRepository citaRepository;
     private final ModelMapper modelMapper;
+    private final UsuarioRepository usuarioRepository;
+    private final ConsultorioServicioURepository consultorioServicioURepository;
 
     @Override
-    public List<Cita> findAll() {
-        return citaRepository.findAll();
+    public List<CitaResponseDto> findAll() {
+        List<Cita> citas = citaRepository.findAll();
+        return citas.stream().map(c -> mapperCitaResponse(c)).collect(Collectors.toList());
     }
 
     @Override
-    public List<Cita> findAllWithConditions(CitaFilterDto citaFilterDto) {
-        // IMPLEMENTACIÓN TEMPORAL (reemplazar con consultas personalizadas del repositorio):
+    public List<CitaResponseDto> findAllWithConditions(CitaFilterDto citaFilterDto) {
+
         List<Cita> citas = citaRepository.findAll();
         
         // Filtrar por campos del FilterDto si no son null
@@ -39,42 +46,21 @@ public class CitaServiceImpl implements CitaService {
                     .collect(Collectors.toList());
         }
         
-        if (citaFilterDto.getIdServicio() != null) {
-            // Aquí necesitarías acceder al servicio a través de la relación
-            // Por ahora filtro comentado hasta tener la relación correcta
+        if (citaFilterDto.getIdConsultorioServicioU() != null) {
              citas = citas.stream()
-                     .filter(c -> c.getServicio() != null && c.getServicio().getIdServicio().equals(citaFilterDto.getIdServicio()))
+                     .filter(c -> c.getConsultorioServicioU() != null && c.getConsultorioServicioU().getIdConsultorioServicioU().equals(citaFilterDto.getIdConsultorioServicioU()))
                      .collect(Collectors.toList());
         }
-        
-         if (citaFilterDto.getIdConsultorio() != null) {
-            // Similar al servicio, necesitarías la relación con consultorio
-             citas = citas.stream()
-                     .filter(c -> c.getDoctor().getConsultorio() != null && c.getDoctor().getConsultorio().getIdConsultorio().equals(citaFilterDto.getIdConsultorio()))
-                     .collect(Collectors.toList());
-         }
-        
-        if (citaFilterDto.getIdMedico() != null) {
+
+
+        if (citaFilterDto.getIdPersona() != null) {
             citas = citas.stream()
-                    .filter(c -> c.getDoctor() != null && c.getDoctor().getIdUsuario().equals(citaFilterDto.getIdMedico()))
+                    .filter(c -> c.getPaciente() != null &&
+                            c.getPaciente().getIdUsuario() != null &&
+                            c.getPaciente().getIdUsuario().equals(citaFilterDto.getIdPersona()))
                     .collect(Collectors.toList());
         }
 
-        if (citaFilterDto.getDniPersona() != null && citaFilterDto.getDniPersona() > 0) {
-            citas = citas.stream()
-                    .filter(c -> c.getPaciente() != null &&
-                            c.getPaciente().getPersona() != null &&
-                            c.getPaciente().getPersona().getDni().equals(citaFilterDto.getDniPersona()))
-                    .collect(Collectors.toList());
-        }
-        
-        if (citaFilterDto.getMotivo() != null && !citaFilterDto.getMotivo().trim().isEmpty()) {
-            citas = citas.stream()
-                    .filter(c -> c.getMotivo() != null && 
-                            c.getMotivo().toLowerCase().contains(citaFilterDto.getMotivo().toLowerCase()))
-                    .collect(Collectors.toList());
-        }
-        
         if (citaFilterDto.getFechaHoraInicio() != null) {
             citas = citas.stream()
                     .filter(c -> c.getFechaHoraInicio() != null && 
@@ -95,21 +81,14 @@ public class CitaServiceImpl implements CitaService {
                     .collect(Collectors.toList());
         }
         
-        if (citaFilterDto.getDescripcion() != null && !citaFilterDto.getDescripcion().trim().isEmpty()) {
-            citas = citas.stream()
-                    .filter(c -> c.getDescripcion() != null && 
-                            c.getDescripcion().toLowerCase().contains(citaFilterDto.getDescripcion().toLowerCase()))
-                    .collect(Collectors.toList());
-        }
-        
-        return citas;
+        return citas.stream().map(e -> mapperCitaResponse(e)).collect(Collectors.toList());
     }
 
     @Override
     public CitaResponseDto getById(Integer id) {
         Optional<Cita> cita = citaRepository.findById(id);
         if (cita.isPresent()) {
-            return modelMapper.map(cita.get(), CitaResponseDto.class);
+            return mapperCitaResponse(cita.get());
         }
         throw new RuntimeException("Cita no encontrada con ID: " + id);
     }
@@ -127,14 +106,19 @@ public class CitaServiceImpl implements CitaService {
         }
         
         Cita cita = modelMapper.map(citaInsertDto, Cita.class);
-        
+        Usuario paciente = usuarioRepository.findById(citaInsertDto.getIdPaciente()).orElseThrow(()->new RuntimeException("No existe el paciente"));
+        cita.setPaciente(paciente);
+        ConsultorioServicioU consul = consultorioServicioURepository.findById(citaInsertDto.getIdConsultorioServicioU()).orElseThrow(()->new RuntimeException("No existe la relación con el consultorio"));
+        cita.setConsultorioServicioU(consul);
+
+
         // Establecer estado por defecto si no se proporciona
         if (cita.getEstado() == null) {
             cita.setEstado(EstadoCitaEnum.SOLICITADA);
         }
         
         Cita savedCita = citaRepository.save(cita);
-        return modelMapper.map(savedCita, CitaResponseDto.class);
+        return mapperCitaResponse(savedCita);
     }
 
     @Override
@@ -161,9 +145,6 @@ public class CitaServiceImpl implements CitaService {
             if (citaUpdateDto.getEstado() != null) {
                 cita.setEstado(citaUpdateDto.getEstado());
             }
-            if (citaUpdateDto.getDescripcion() != null) {
-                cita.setDescripcion(citaUpdateDto.getDescripcion());
-            }
             
             // Validar consistencia de fechas después de las actualizaciones
             if (cita.getFechaHoraFin() != null && cita.getFechaHoraInicio() != null &&
@@ -172,7 +153,7 @@ public class CitaServiceImpl implements CitaService {
             }
             
             Cita updatedCita = citaRepository.save(cita);
-            return modelMapper.map(updatedCita, CitaResponseDto.class);
+            return mapperCitaResponse(updatedCita);
         }
         
         throw new RuntimeException("Cita no encontrada con ID: " + id);
@@ -183,34 +164,44 @@ public class CitaServiceImpl implements CitaService {
         Optional<Cita> cita = citaRepository.findById(id);
         
         if (cita.isPresent()) {
+            // Soft delete con estado CANCELADA para las citas eliminadas
+
             Cita citaEntity = cita.get();
             
             // Validar si la cita puede ser eliminada según su estado
             if (citaEntity.getEstado() == EstadoCitaEnum.REALIZADA || citaEntity.getEstado() == EstadoCitaEnum.CANCELADA) {
                 throw new RuntimeException("No se puede eliminar una cita que ya fue completada o cancelada");
             }
-            
-            // Verificar si tiene relaciones dependientes
-            if (citaEntity.getDiagnosticos() != null && !citaEntity.getDiagnosticos().isEmpty()) {
-                throw new RuntimeException("No se puede eliminar la cita porque tiene diagnósticos asociados");
-            }
-            
-            if (citaEntity.getRecetas() != null && !citaEntity.getRecetas().isEmpty()) {
-                throw new RuntimeException("No se puede eliminar la cita porque tiene recetas asociadas");
-            }
-            
-            if (citaEntity.getRecomendaciones() != null && !citaEntity.getRecomendaciones().isEmpty()) {
-                throw new RuntimeException("No se puede eliminar la cita porque tiene recomendaciones asociadas");
-            }
-            
-            if (citaEntity.getDetallePago() != null) {
-                throw new RuntimeException("No se puede eliminar la cita porque tiene un pago asociado");
-            }
-            
-            citaRepository.deleteById(id);
-            return true;
+
+
+//            // Verificar si tiene relaciones dependientes
+//            if (citaEntity.getDiagnosticos() != null && !citaEntity.getDiagnosticos().isEmpty()) {
+//                throw new RuntimeException("No se puede eliminar la cita porque tiene diagnósticos asociados");
+//            }
+//
+//            if (citaEntity.getRecetas() != null && !citaEntity.getRecetas().isEmpty()) {
+//                throw new RuntimeException("No se puede eliminar la cita porque tiene recetas asociadas");
+//            }
+//
+//            if (citaEntity.getRecomendaciones() != null && !citaEntity.getRecomendaciones().isEmpty()) {
+//                throw new RuntimeException("No se puede eliminar la cita porque tiene recomendaciones asociadas");
+//            }
+//
+//            if (citaEntity.getDetallePago() != null) {
+//                throw new RuntimeException("No se puede eliminar la cita porque tiene un pago asociado");
+//            }
+            citaEntity.setEstado(EstadoCitaEnum.CANCELADA);
+            citaRepository.save(citaEntity);
+            return Boolean.TRUE;
         }
         
-        return false;
+        return Boolean.FALSE;
+    }
+
+    private CitaResponseDto mapperCitaResponse(Cita cita){
+        CitaResponseDto citaResponseDto = modelMapper.map(cita, CitaResponseDto.class);
+        citaResponseDto.setIdPaciente(cita.getPaciente().getIdUsuario());
+        citaResponseDto.setIdConsultorioServicioU(cita.getConsultorioServicioU().getIdConsultorioServicioU());
+        return citaResponseDto;
     }
 }
