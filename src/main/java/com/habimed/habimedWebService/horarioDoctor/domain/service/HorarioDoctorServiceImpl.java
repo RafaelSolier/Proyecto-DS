@@ -143,7 +143,7 @@ public class HorarioDoctorServiceImpl implements HorarioDoctorService {
         if (horarioDoctor.getDiaSemana() != null) {
             horarioDoctor.setDiaSemana(normalizarDiaSemana(String.valueOf(horarioDoctor.getDiaSemana())));
         }
-        
+        horarioDoctor.setIdHorarioDoctor(null);
         HorarioDoctor savedHorarioDoctor = horarioDoctorRepository.save(horarioDoctor);
         return mapToResponseDto(savedHorarioDoctor);
     }

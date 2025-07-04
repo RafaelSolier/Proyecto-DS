@@ -120,7 +120,7 @@ public class DiagnosticoServiceImpl implements DiagnosticoService {
         if (diagnostico.getFechaDiagnostico() == null) {
             diagnostico.setFechaDiagnostico(LocalDate.now());
         }
-        
+        diagnostico.setIdDiagnostico(null);
         Diagnostico savedDiagnostico = diagnosticoRepository.save(diagnostico);
         return mapToResponseDto(savedDiagnostico);
     }

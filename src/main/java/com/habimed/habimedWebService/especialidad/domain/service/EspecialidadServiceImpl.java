@@ -89,7 +89,7 @@ public class EspecialidadServiceImpl implements EspecialidadService {
         if (especialidad.getDescripcion() != null && !especialidad.getDescripcion().trim().isEmpty()) {
             especialidad.setDescripcion(especialidad.getDescripcion().trim());
         }
-        
+        especialidad.setIdEspecialidad(null);
         Especialidad savedEspecialidad = especialidadRepository.save(especialidad);
         return modelMapper.map(savedEspecialidad, EspecialidadResponseDto.class);
     }

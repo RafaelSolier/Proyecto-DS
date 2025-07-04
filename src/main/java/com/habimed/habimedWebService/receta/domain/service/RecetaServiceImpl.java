@@ -160,7 +160,7 @@ public class RecetaServiceImpl implements RecetaService {
         
         // Normalizar y limpiar la descripción
         receta.setDescripcion(normalizarDescripcion(receta.getDescripcion()));
-        
+        receta.setIdReceta(null);
         Receta savedReceta = recetaRepository.save(receta);
         return mapToResponseDto(savedReceta);
     }

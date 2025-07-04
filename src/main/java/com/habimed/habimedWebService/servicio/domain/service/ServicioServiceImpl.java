@@ -95,7 +95,7 @@ public class ServicioServiceImpl implements ServicioService {
         
         Servicio servicio = modelMapper.map(servicioInsertDto, Servicio.class);
         servicio.setEspecialidad(especialidadEntity);
-        servicio.setIdServicio(null); 
+        servicio.setIdServicio(null);
         Servicio savedServicio = servicioRepository.save(servicio);
         ServicioResponseDto responseDto = modelMapper.map(savedServicio, ServicioResponseDto.class);
         responseDto.setIdEspecialidad(savedServicio.getEspecialidad().getIdEspecialidad());

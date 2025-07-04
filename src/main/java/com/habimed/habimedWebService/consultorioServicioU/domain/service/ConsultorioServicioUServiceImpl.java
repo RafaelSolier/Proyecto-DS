@@ -108,6 +108,7 @@ public class ConsultorioServicioUServiceImpl implements ConsultorioServicioUServ
         u.setConsultorio(consultorio.get());
         u.setServicio(servicio.get());
         u.setUsuario(usuario.get());
+        u.setIdConsultorioServicioU(null);
         consultorioServicioURepository.save(u);
 
         return u;

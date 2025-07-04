@@ -1,5 +1,6 @@
 package com.habimed.habimedWebService.persona.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.habimed.habimedWebService.usuario.domain.model.Usuario;
 import jakarta.persistence.*;
 
@@ -38,6 +39,7 @@ public class Persona {
     private LocalDate fechaNacimiento;
 
     // Relación inversa One-to-Many con Usuario
-    @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Usuario> usuarios;
 }

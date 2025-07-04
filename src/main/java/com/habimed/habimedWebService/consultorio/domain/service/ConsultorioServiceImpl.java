@@ -116,6 +116,7 @@ public class ConsultorioServiceImpl implements ConsultorioService {
         }
         
         Consultorio consultorio = modelMapper.map(consultorioInsertDto, Consultorio.class);
+        consultorio.setIdConsultorio(null);
         Consultorio savedConsultorio = consultorioRepository.save(consultorio);
         return modelMapper.map(savedConsultorio, ConsultorioResponseDto.class);
     }

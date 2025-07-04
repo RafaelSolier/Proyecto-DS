@@ -12,7 +12,6 @@ import com.habimed.habimedWebService.cita.domain.model.Cita;
 import com.habimed.habimedWebService.cita.domain.model.EstadoCitaEnum;
 import com.habimed.habimedWebService.cita.dto.*;
 import com.habimed.habimedWebService.cita.repository.CitaRepository;
-import com.habimed.habimedWebService.usuario.domain.service.UsuarioService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -116,7 +115,7 @@ public class CitaServiceImpl implements CitaService {
         if (cita.getEstado() == null) {
             cita.setEstado(EstadoCitaEnum.SOLICITADA);
         }
-        
+        cita.setIdCita(null);
         Cita savedCita = citaRepository.save(cita);
         return mapperCitaResponse(savedCita);
     }

@@ -8,11 +8,8 @@ import com.habimed.habimedWebService.persona.domain.model.Persona;
 import com.habimed.habimedWebService.persona.dto.*;
 import com.habimed.habimedWebService.persona.repository.PersonaRepository;
 
-import java.time.LocalDate;
-import java.time.Period;
 import java.util.List;
 import java.util.Optional;
-import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 @Service
@@ -76,6 +73,7 @@ public class PersonaServiceImpl implements PersonaService {
     public PersonaResponseDto save(PersonaInsertDto personaInsertDto) {
 
         Persona persona = modelMapper.map(personaInsertDto, Persona.class);
+        persona.setId(null);
         Persona savedPersona = personaRepository.save(persona);
         return modelMapper.map(savedPersona, PersonaResponseDto.class);
     }

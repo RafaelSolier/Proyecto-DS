@@ -2,7 +2,6 @@ package com.habimed.habimedWebService.usuario.application;
 
 import java.util.List;
 
-import com.habimed.habimedWebService.usuario.domain.model.Usuario;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

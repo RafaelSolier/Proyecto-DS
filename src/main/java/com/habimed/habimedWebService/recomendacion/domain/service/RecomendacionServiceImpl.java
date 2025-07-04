@@ -156,7 +156,7 @@ public class RecomendacionServiceImpl implements RecomendacionService {
         
         // Normalizar y limpiar la descripción
         recomendacion.setDescripcion(normalizarDescripcion(recomendacion.getDescripcion()));
-        
+        recomendacion.setIdRecomendacion(null);
         Recomendacion savedRecomendacion = recomendacionRepository.save(recomendacion);
         return mapToResponseDto(savedRecomendacion);
     }

@@ -75,6 +75,7 @@ public class DetallePagoServiceImpl implements DetallePagoService {
     public DetallePagoResponseDto save(DetallePagoInsertDto detallePagoInsertDto) {
         DetallePago detallePago = modelMapper.map(detallePagoInsertDto, DetallePago.class);
         DetallePago savedDetallePago = detallePagoRepository.save(detallePago);
+        savedDetallePago.setIdDetallePago(null);
         return modelMapper.map(savedDetallePago, DetallePagoResponseDto.class);
     }
 

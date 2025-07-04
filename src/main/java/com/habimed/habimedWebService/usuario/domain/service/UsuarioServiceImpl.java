@@ -121,7 +121,8 @@ public class UsuarioServiceImpl implements UsuarioService {
         // Establecer estado por defecto
         usuario.setEstado(usuarioInsertDto.getEstado() != null ? usuarioInsertDto.getEstado() : false);
         usuario.setIdUsuario(null);
-        return modelMapper.map(usuarioRepository.save(usuario), UsuarioResponseDto.class);
+        Usuario _usuario = usuarioRepository.save(usuario);
+        return modelMapper.map(_usuario,UsuarioResponseDto.class);
     }
 
     @Override

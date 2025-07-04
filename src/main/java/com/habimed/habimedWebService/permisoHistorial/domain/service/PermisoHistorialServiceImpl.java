@@ -152,7 +152,7 @@ public class PermisoHistorialServiceImpl implements PermisoHistorialService {
         if (permiso.getFechaOtorgaPermiso().isAfter(LocalDate.now())) {
             throw new RuntimeException("La fecha de otorgamiento no puede ser futura");
         }
-        
+        permiso.setIdPermisoHistorial(null);
         PermisosHistorial savedPermiso = permisoHistorialRepository.save(permiso);
         return modelMapper.map(savedPermiso, PermisoHistorialResponseDto.class);
     }

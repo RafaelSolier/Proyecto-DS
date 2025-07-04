@@ -1,5 +1,6 @@
 package com.habimed.habimedWebService.usuario.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.habimed.habimedWebService.cita.domain.model.Cita;
 import com.habimed.habimedWebService.consultorio.domain.model.Consultorio;
 import com.habimed.habimedWebService.consultorioServicioU.domain.model.ConsultorioServicioU;
@@ -23,7 +24,8 @@ public class Usuario {
     private Integer idUsuario;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "idpersona", referencedColumnName = "idpersona", insertable = false, updatable = false)
+    @JoinColumn(name = "idpersona", nullable = false)
+    @JsonBackReference
     private Persona persona;
 
     @Column(name = "tipousuario", nullable = false)
