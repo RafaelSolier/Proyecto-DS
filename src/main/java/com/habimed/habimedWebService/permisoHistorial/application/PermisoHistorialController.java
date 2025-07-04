@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/permisos")
+@RequestMapping("/api/permiso-historial")
 @RequiredArgsConstructor
 public class PermisoHistorialController {
 
