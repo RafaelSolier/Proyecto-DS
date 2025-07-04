@@ -104,7 +104,7 @@ public class RecomendacionServiceImpl implements RecomendacionService {
             throw new RuntimeException("No se puede crear una recomendación para una cita que aún no ha ocurrido");
         }
         
-        // Verificar que el doctor esté asignado a la cita
+        /* // Verificar que el doctor esté asignado a la cita
         if (citaEntity.getDoctor() == null) {
             throw new RuntimeException("No se puede crear una recomendación para una cita sin doctor asignado");
         }
@@ -112,7 +112,7 @@ public class RecomendacionServiceImpl implements RecomendacionService {
         // Validar que el doctor sea realmente un doctor
         if (citaEntity.getDoctor().getTipoUsuario() != com.habimed.habimedWebService.usuario.domain.model.TipoUsuarioEnum.DOCTOR) {
             throw new RuntimeException("Solo un doctor puede crear recomendaciones médicas");
-        }
+        } */
         
         // Validar contenido de la descripción
         if (!validarDescripcionRecomendacion(recomendacionInsertDto.getDescripcion())) {
@@ -321,11 +321,12 @@ public class RecomendacionServiceImpl implements RecomendacionService {
     }
     
     public List<Recomendacion> getRecomendacionesPorDoctor(Integer idDoctor) {
-        return recomendacionRepository.findAll().stream()
-                .filter(r -> r.getCita() != null && 
-                        r.getCita().getDoctor() != null &&
-                        r.getCita().getDoctor().getIdUsuario().equals(idDoctor))
-                .collect(Collectors.toList());
+        // return recomendacionRepository.findAll().stream()
+        //         .filter(r -> r.getCita() != null && 
+        //                 r.getCita().getDoctor() != null &&
+        //                 r.getCita().getDoctor().getIdUsuario().equals(idDoctor))
+        //         .collect(Collectors.toList());
+        return null;
     }
     
     public List<Recomendacion> getRecomendacionesPorPaciente(Integer idPaciente) {
@@ -368,12 +369,12 @@ public class RecomendacionServiceImpl implements RecomendacionService {
             responseDto.setMotivoCita(recomendacion.getCita().getMotivo());
             
             // Agregar información del doctor
-            if (recomendacion.getCita().getDoctor() != null && 
+            /* if (recomendacion.getCita().getDoctor() != null && 
                 recomendacion.getCita().getDoctor().getPersona() != null) {
                 String nombreDoctor = recomendacion.getCita().getDoctor().getPersona().getNombres() + 
                         " " + recomendacion.getCita().getDoctor().getPersona().getApellidos();
                 responseDto.setNombreDoctor(nombreDoctor);
-            }
+            } */
             
             // Agregar información del paciente
             if (recomendacion.getCita().getPaciente() != null && 
