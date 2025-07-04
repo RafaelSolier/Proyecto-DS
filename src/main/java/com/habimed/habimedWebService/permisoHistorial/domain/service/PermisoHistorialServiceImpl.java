@@ -120,19 +120,13 @@ public class PermisoHistorialServiceImpl implements PermisoHistorialService {
         }
         
         // Verificar si ya existe un permiso activo entre este doctor y paciente
-        // List<PermisosHistorial> permisosExistentes = permisoHistorialRepository.findAll();
-        List<PermisosHistorial> permisosExistentes = permisoHistorialRepository.findByIddoctorAndIdpaciente(
-                permisoHistorialInsertDto.getIddoctor(), 
-                permisoHistorialInsertDto.getIdpaciente()
-        );
-        boolean permisoActivoExists = permisosExistentes.get(0).getEstado() == EstadoPermisosEnum.ACTIVO &&
-                permisosExistentes.get(0).getFechaDenegaPermiso().isAfter(LocalDate.now());
-        //boolean permisoActivoExists = permisosExistentes.stream()
-        //        .anyMatch(p -> p.getDoctor() != null && p.getPaciente() != null &&
-        //                p.getDoctor().getIdUsuario().equals(permisoHistorialInsertDto.getIddoctor()) &&
-        //                p.getPaciente().getIdUsuario().equals(permisoHistorialInsertDto.getIdpaciente()) &&
-        //                p.getEstado() == EstadoPermisosEnum.ACTIVO &&
-        //                p.getFechaDenegaPermiso() == null);
+        List<PermisosHistorial> permisosExistentes = permisoHistorialRepository.findAll();
+        boolean permisoActivoExists = permisosExistentes.stream()
+               .anyMatch(p -> p.getDoctor() != null && p.getPaciente() != null &&
+                       p.getDoctor().getIdUsuario().equals(permisoHistorialInsertDto.getIddoctor()) &&
+                       p.getPaciente().getIdUsuario().equals(permisoHistorialInsertDto.getIdpaciente()) &&
+                       p.getEstado() == EstadoPermisosEnum.ACTIVO &&
+                       p.getFechaDenegaPermiso() == null);
         
         if (permisoActivoExists) {
             throw new RuntimeException("Ya existe un permiso activo entre el doctor ID " + 

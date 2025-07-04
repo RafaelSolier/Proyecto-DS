@@ -23,7 +23,7 @@ public class Usuario {
     private Integer idUsuario;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "idpersona", referencedColumnName = "id", insertable = false, updatable = false)
+    @JoinColumn(name = "idpersona", referencedColumnName = "idpersona", insertable = false, updatable = false)
     private Persona persona;
 
     @Column(name = "tipousuario", nullable = false)

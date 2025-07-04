@@ -22,7 +22,7 @@ public class ConsultorioServicioUController {
         return ResponseEntity.ok(consultorioServicioUService.findAll());
     }
 
-    @GetMapping
+    @GetMapping("/filter")
     public ResponseEntity<List<ConsultorioServicioU>> buscaConsultorioU(@RequestBody FilterConsultorioServicioUDto filterConsultorioServicioUDto) {
         return ResponseEntity.ok(consultorioServicioUService.findAllWithConditions(filterConsultorioServicioUDto));
     }

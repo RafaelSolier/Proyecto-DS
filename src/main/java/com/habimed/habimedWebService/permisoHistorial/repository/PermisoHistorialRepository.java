@@ -10,6 +10,4 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PermisoHistorialRepository extends JpaRepository<PermisosHistorial, Integer> {
     
-    List<PermisosHistorial> findByIddoctorAndIdpaciente(Integer iddoctor, Integer idpaciente);
-
 }

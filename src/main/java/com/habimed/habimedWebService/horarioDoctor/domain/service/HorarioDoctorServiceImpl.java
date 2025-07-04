@@ -120,21 +120,15 @@ public class HorarioDoctorServiceImpl implements HorarioDoctorService {
         }
         
         if (horarioDoctorInsertDto.getDiaSemana() != null) {
-            //String diaBuscado = horarioDoctorInsertDto.getDiaSemana().toUpperCase().trim();
+            String diaBuscado = horarioDoctorInsertDto.getDiaSemana().toUpperCase().trim();
             
-            //List<HorarioDoctor> horariosExistentes = horarioDoctorRepository.findAll();
-            //boolean hayConflicto = horariosExistentes.stream()
-            //        .anyMatch(h -> h.getDoctor() != null && 
-            //                h.getDoctor().getIdUsuario().equals(horarioDoctorInsertDto.getIdDoctor()) &&
-            //                h.getDiaSemana() != null &&
-            //                h.getDiaSemana().name().equalsIgnoreCase(diaBuscado) &&
-            //                hayConflictoHorario(h, horarioDoctorInsertDto.getHoraInicio(), horarioDoctorInsertDto.getHoraFin()));
-            boolean hayConflicto = horarioDoctorRepository.existsConflictingHorario(
-                horarioDoctorInsertDto.getIdDoctor(),
-                normalizarDiaSemana(horarioDoctorInsertDto.getDiaSemana()),
-                horarioDoctorInsertDto.getHoraInicio(),
-                horarioDoctorInsertDto.getHoraFin()
-            );
+            List<HorarioDoctor> horariosExistentes = horarioDoctorRepository.findAll();
+            boolean hayConflicto = horariosExistentes.stream()
+                   .anyMatch(h -> h.getDoctor() != null && 
+                           h.getDoctor().getIdUsuario().equals(horarioDoctorInsertDto.getIdDoctor()) &&
+                           h.getDiaSemana() != null &&
+                           h.getDiaSemana().name().equalsIgnoreCase(diaBuscado) &&
+                           hayConflictoHorario(h, horarioDoctorInsertDto.getHoraInicio(), horarioDoctorInsertDto.getHoraFin()));
 
             if (hayConflicto) {
                 throw new RuntimeException("Ya existe un horario conflictivo para el doctor en el día " + 
@@ -182,31 +176,19 @@ public class HorarioDoctorServiceImpl implements HorarioDoctorService {
             String diaActual = horarioDoctorUpdateDto.getDiaSemana() != null ? 
                     horarioDoctorUpdateDto.getDiaSemana() : String.valueOf(horarioDoctor.getDiaSemana());
             
-            //if (diaActual != null && horarioDoctor.getDoctor() != null) {
-            //    List<HorarioDoctor> horariosExistentes = horarioDoctorRepository.findAll();
-            //    boolean hayConflicto = horariosExistentes.stream()
-            //            .anyMatch(h -> !h.getIdHorarioDoctor().equals(horarioDoctor.getIdHorarioDoctor()) &&
-            //                    h.getDoctor() != null && 
-            //                    h.getDoctor().getIdUsuario().equals(horarioDoctor.getDoctor().getIdUsuario()) &&
-            //                    h.getDiaSemana() != null &&
-            //                    h.getDiaSemana().name().equalsIgnoreCase(diaActual) &&
-            //                    hayConflictoHorario(h, nuevaHoraInicio, nuevaHoraFin));
-            //    
-            //    if (hayConflicto) {
-            //        throw new RuntimeException("El horario actualizado genera conflicto con otro horario existente");
-            //    }
-            //}
-            
-            boolean hayConflicto = horarioDoctorRepository.existsConflictingHorarioForUpdate(
-                horarioDoctor.getDoctor().getIdUsuario(),
-                normalizarDiaSemana(diaActual),
-                nuevaHoraInicio,
-                nuevaHoraFin,
-                horarioDoctor.getIdHorarioDoctor()
-            );
-
-            if (hayConflicto) {
-                throw new RuntimeException("El horario actualizado genera conflicto con otro horario existente");
+            if (diaActual != null && horarioDoctor.getDoctor() != null) {
+               List<HorarioDoctor> horariosExistentes = horarioDoctorRepository.findAll();
+               boolean hayConflicto = horariosExistentes.stream()
+                       .anyMatch(h -> !h.getIdHorarioDoctor().equals(horarioDoctor.getIdHorarioDoctor()) &&
+                               h.getDoctor() != null && 
+                               h.getDoctor().getIdUsuario().equals(horarioDoctor.getDoctor().getIdUsuario()) &&
+                               h.getDiaSemana() != null &&
+                               h.getDiaSemana().name().equalsIgnoreCase(diaActual) &&
+                               hayConflictoHorario(h, nuevaHoraInicio, nuevaHoraFin));
+               
+               if (hayConflicto) {
+                   throw new RuntimeException("El horario actualizado genera conflicto con otro horario existente");
+               }
             }
             
             // Actualizar campos
