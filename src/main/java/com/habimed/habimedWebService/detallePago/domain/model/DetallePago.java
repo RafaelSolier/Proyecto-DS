@@ -1,7 +1,6 @@
 package com.habimed.habimedWebService.detallePago.domain.model;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 import com.habimed.habimedWebService.cita.domain.model.Cita;
 

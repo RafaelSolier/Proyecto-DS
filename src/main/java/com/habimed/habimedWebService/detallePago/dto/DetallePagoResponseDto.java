@@ -5,7 +5,6 @@ import com.habimed.habimedWebService.detallePago.domain.model.MetodoPagoEnum;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Data
 public class DetallePagoResponseDto {

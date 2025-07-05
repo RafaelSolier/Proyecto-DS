@@ -1,6 +1,5 @@
 package com.habimed.habimedWebService.consultorio.application;
 
-import com.habimed.habimedWebService.consultorio.domain.model.Consultorio;
 import com.habimed.habimedWebService.consultorio.dto.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

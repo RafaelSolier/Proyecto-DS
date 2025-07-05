@@ -5,7 +5,6 @@ import com.habimed.habimedWebService.detallePago.domain.model.DetallePago;
 import com.habimed.habimedWebService.diagnostico.domain.model.Diagnostico;
 import com.habimed.habimedWebService.receta.domain.model.Receta;
 import com.habimed.habimedWebService.recomendacion.domain.model.Recomendacion;
-import com.habimed.habimedWebService.servicio.domain.model.Servicio;
 import com.habimed.habimedWebService.usuario.domain.model.Usuario;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

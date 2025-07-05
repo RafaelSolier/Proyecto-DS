@@ -1,6 +1,5 @@
 package com.habimed.habimedWebService.detallePago.dto;
 
-import com.habimed.habimedWebService.cita.domain.model.Cita;
 import com.habimed.habimedWebService.detallePago.domain.model.EstadoPagoEnum;
 import com.habimed.habimedWebService.detallePago.domain.model.MetodoPagoEnum;
 import lombok.Data;
@@ -9,7 +8,6 @@ import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Digits;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Data
 public class DetallePagoInsertDto {

@@ -9,10 +9,8 @@ import com.habimed.habimedWebService.receta.dto.RecetaInsertDto;
 import com.habimed.habimedWebService.receta.dto.RecetaResponseDto;
 import com.habimed.habimedWebService.receta.dto.RecetaUpdateDto;
 import com.habimed.habimedWebService.receta.repository.RecetaRepository;
-import com.habimed.habimedWebService.usuario.domain.model.TipoUsuarioEnum;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;

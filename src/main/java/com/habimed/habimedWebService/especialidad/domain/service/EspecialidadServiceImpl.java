@@ -1,6 +1,5 @@
 package com.habimed.habimedWebService.especialidad.domain.service;
 
-import com.habimed.habimedWebService.servicio.domain.model.Servicio;
 import com.habimed.habimedWebService.servicio.domain.service.ServicioService;
 import com.habimed.habimedWebService.servicio.dto.ServicioFilterDto;
 import com.habimed.habimedWebService.servicio.dto.ServicioResponseDto;

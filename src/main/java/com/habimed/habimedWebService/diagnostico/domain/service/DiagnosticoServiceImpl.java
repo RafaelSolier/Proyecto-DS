@@ -13,7 +13,6 @@ import com.habimed.habimedWebService.cita.domain.model.Cita;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

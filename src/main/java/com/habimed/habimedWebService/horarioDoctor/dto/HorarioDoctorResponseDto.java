@@ -3,7 +3,6 @@ package com.habimed.habimedWebService.horarioDoctor.dto;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import java.sql.Time;
 import java.time.LocalTime;
 
 @Data

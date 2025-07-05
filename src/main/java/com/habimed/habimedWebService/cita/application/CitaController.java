@@ -2,7 +2,6 @@ package com.habimed.habimedWebService.cita.application;
 
 import java.util.List;
 
-import com.habimed.habimedWebService.cita.domain.model.Cita;
 import com.habimed.habimedWebService.cita.dto.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

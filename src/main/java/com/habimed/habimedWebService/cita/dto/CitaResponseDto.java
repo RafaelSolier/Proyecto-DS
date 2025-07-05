@@ -1,8 +1,6 @@
 package com.habimed.habimedWebService.cita.dto;
 
 import com.habimed.habimedWebService.cita.domain.model.EstadoCitaEnum;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.time.LocalDateTime;
