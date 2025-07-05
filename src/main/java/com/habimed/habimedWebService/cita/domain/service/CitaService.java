@@ -2,7 +2,6 @@ package com.habimed.habimedWebService.cita.domain.service;
 
 import java.util.List;
 
-import com.habimed.habimedWebService.cita.domain.model.Cita;
 import com.habimed.habimedWebService.cita.dto.*;
 
 public interface CitaService {

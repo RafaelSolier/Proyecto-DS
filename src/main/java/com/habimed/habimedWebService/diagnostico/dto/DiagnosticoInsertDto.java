@@ -1,6 +1,5 @@
 package com.habimed.habimedWebService.diagnostico.dto;
 
-import jakarta.persistence.Column;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;

@@ -1,11 +1,6 @@
 package com.habimed.habimedWebService.consultorio.dto;
 
-
-import org.springframework.jdbc.core.RowMapper;
-
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
 public class ConsultorioDTO {

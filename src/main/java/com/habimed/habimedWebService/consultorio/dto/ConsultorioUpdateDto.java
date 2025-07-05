@@ -1,6 +1,5 @@
 package com.habimed.habimedWebService.consultorio.dto;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import jakarta.validation.constraints.Size;
 import jakarta.validation.constraints.Pattern;
