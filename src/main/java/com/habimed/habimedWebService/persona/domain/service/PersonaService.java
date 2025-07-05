@@ -6,9 +6,9 @@ import com.habimed.habimedWebService.persona.domain.model.Persona;
 import com.habimed.habimedWebService.persona.dto.*;
 
 public interface PersonaService {
-    List<Persona> findAll();
-    List<Persona> findAllWithConditions(PersonaFilterDto personaFilterDto);
-    PersonaResponseDto getById(Integer idPersona);
+    List<PersonaResponseDto> findAll();
+    List<PersonaResponseDto> findAllWithConditions(PersonaFilterDto personaFilterDto);
+    Persona getById(Integer idPersona);
     PersonaResponseDto save(PersonaInsertDto personaInsertDto);
     Boolean delete(Integer idPersona);
     PersonaResponseDto update(Integer idPersona, PersonaUpdateDto personaUpdateDto);

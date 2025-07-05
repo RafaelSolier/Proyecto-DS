@@ -20,12 +20,12 @@ public class PersonaServiceImpl implements PersonaService {
     private final ModelMapper modelMapper;
 
     @Override
-    public List<Persona> findAll() {
-        return personaRepository.findAll();
+    public List<PersonaResponseDto> findAll() {
+        return personaRepository.findAll().stream().map(persona -> modelMapper.map(persona, PersonaResponseDto.class)).collect(Collectors.toList());
     }
 
     @Override
-    public List<Persona> findAllWithConditions(PersonaFilterDto personaFilterDto) {
+    public List<PersonaResponseDto> findAllWithConditions(PersonaFilterDto personaFilterDto) {
         List<Persona> personas = personaRepository.findAll();
 
         if (personaFilterDto.getDni() != null && !personaFilterDto.getDni().trim().isEmpty()) {
@@ -57,14 +57,14 @@ public class PersonaServiceImpl implements PersonaService {
                     .collect(Collectors.toList());
         }
 
-        return personas;
+        return personas.stream().map(persona -> modelMapper.map(persona, PersonaResponseDto.class)).collect(Collectors.toList());
     }
 
     @Override
-    public PersonaResponseDto getById(Integer idPersona) {
+    public Persona getById(Integer idPersona) {
         Optional<Persona> persona = personaRepository.findById(idPersona);
         if (persona.isPresent()) {
-            return modelMapper.map(persona.get(), PersonaResponseDto.class);
+            return persona.get();
         }
         throw new RuntimeException("Persona no encontrada con ID: " + idPersona);
     }

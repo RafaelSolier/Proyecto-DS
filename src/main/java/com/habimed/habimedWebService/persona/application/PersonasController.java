@@ -19,9 +19,9 @@ public class PersonasController {
     private final PersonaService personaService;
 
     @GetMapping
-    public ResponseEntity<List<Persona>> getAllPersonas() {
+    public ResponseEntity<List<PersonaResponseDto>> getAllPersonas() {
         try {
-            List<Persona> personas = personaService.findAll();
+            List<PersonaResponseDto> personas = personaService.findAll();
             return ResponseEntity.ok(personas);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -29,9 +29,9 @@ public class PersonasController {
     }
 
     @PostMapping("/filter")
-    public ResponseEntity<List<Persona>> getPersonasWithFilter(@Valid @RequestBody PersonaFilterDto filterDto) {
+    public ResponseEntity<List<PersonaResponseDto>> getPersonasWithFilter(@Valid @RequestBody PersonaFilterDto filterDto) {
         try {
-            List<Persona> personas = personaService.findAllWithConditions(filterDto);
+            List<PersonaResponseDto> personas = personaService.findAllWithConditions(filterDto);
             return ResponseEntity.ok(personas);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -39,15 +39,15 @@ public class PersonasController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PersonaResponseDto> getPersonaByDni(@PathVariable Integer id) {
+    public ResponseEntity<Persona> getPersonaByDni(@PathVariable Integer id) {
         try {
-            PersonaResponseDto persona = personaService.getById(id);
+            Persona persona = personaService.getById(id);
             if (persona != null) {
                 return ResponseEntity.ok(persona);
             } else {
                 return ResponseEntity.notFound().build();
             }
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
