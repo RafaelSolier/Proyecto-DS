@@ -1,5 +1,6 @@
 package com.habimed.habimedWebService.persona.application;
 
+import com.habimed.habimedWebService.exception.ConflictException;
 import com.habimed.habimedWebService.persona.domain.model.Persona;
 import com.habimed.habimedWebService.persona.domain.service.PersonaService;
 
@@ -58,7 +59,7 @@ public class PersonasController {
             PersonaResponseDto createdPersona = personaService.save(personaInsertDto);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdPersona);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            throw new ConflictException(e.getMessage());
         }
     }
 

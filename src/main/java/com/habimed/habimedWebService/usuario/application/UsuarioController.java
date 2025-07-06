@@ -2,6 +2,8 @@ package com.habimed.habimedWebService.usuario.application;
 
 import java.util.List;
 
+import com.habimed.habimedWebService.exception.ConflictException;
+import com.habimed.habimedWebService.exception.ResourceNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -58,7 +60,12 @@ public class UsuarioController {
             UsuarioResponseDto createdUsuario = usuarioService.save(usuarioInsertDto);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdUsuario);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            if (e instanceof ConflictException) {
+                throw new ConflictException(e.getMessage());
+            } else if (e instanceof ResourceNotFoundException) {
+                throw new ResourceNotFoundException(e.getMessage());
+            }
+            throw new RuntimeException(e.getMessage());
         }
     }
 

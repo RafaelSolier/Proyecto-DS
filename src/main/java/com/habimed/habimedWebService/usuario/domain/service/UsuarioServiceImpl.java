@@ -1,5 +1,7 @@
 package com.habimed.habimedWebService.usuario.domain.service;
 
+import com.habimed.habimedWebService.exception.ConflictException;
+import com.habimed.habimedWebService.exception.ResourceNotFoundException;
 import com.habimed.habimedWebService.persona.domain.model.Persona;
 import com.habimed.habimedWebService.persona.repository.PersonaRepository;
 import com.habimed.habimedWebService.usuario.domain.model.TipoUsuarioEnum;
@@ -97,7 +99,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         // Verificar que la persona existe
         Optional<Persona> persona = personaRepository.findById(usuarioInsertDto.getIdPersona());
         if (!persona.isPresent()) {
-            throw new RuntimeException("No existe una persona con DNI: " + usuarioInsertDto.getIdPersona());
+            throw new ResourceNotFoundException("No existe una persona con DNI: " + usuarioInsertDto.getIdPersona());
         }
         
         Persona personaEntity = persona.get();
@@ -112,7 +114,7 @@ public class UsuarioServiceImpl implements UsuarioService {
                 .anyMatch(u -> u.getTipoUsuario() == usuarioInsertDto.getTipoUsuario());
         
         if (tipoUsuarioExiste) {
-            throw new RuntimeException("La persona ya tiene un usuario de tipo: " + usuarioInsertDto.getTipoUsuario());
+            throw new ConflictException("La persona ya tiene un usuario de tipo: " + usuarioInsertDto.getTipoUsuario());
         }
 
         Usuario usuario = modelMapper.map(usuarioInsertDto, Usuario.class);
@@ -188,8 +190,8 @@ public class UsuarioServiceImpl implements UsuarioService {
                     throw new RuntimeException("No se puede eliminar el último administrador activo del sistema");
                 }
             }
-
-            usuarioRepository.deleteById(id);
+            usuarioEntity.setEstado(Boolean.FALSE);
+            usuarioRepository.save(usuarioEntity);
             return Boolean.TRUE;
         }
         

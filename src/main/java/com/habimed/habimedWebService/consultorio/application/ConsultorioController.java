@@ -1,6 +1,7 @@
 package com.habimed.habimedWebService.consultorio.application;
 
 import com.habimed.habimedWebService.consultorio.dto.*;
+import com.habimed.habimedWebService.exception.ConflictException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -39,8 +40,13 @@ public class ConsultorioController {
 
     @PostMapping
     public ResponseEntity<ConsultorioResponseDto> createConsultorio(@Valid @RequestBody ConsultorioInsertDto consultorioInsertDto) {
-        ConsultorioResponseDto consultorioCreado = consultorioService.save(consultorioInsertDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(consultorioCreado);
+        try {
+            ConsultorioResponseDto consultorioCreado = consultorioService.save(consultorioInsertDto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(consultorioCreado);
+        }catch (Exception e){
+            if (e instanceof ConflictException){ throw new ConflictException(e.getMessage());}
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     @PatchMapping("/{id}")

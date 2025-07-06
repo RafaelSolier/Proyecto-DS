@@ -1,5 +1,7 @@
 package com.habimed.habimedWebService.servicio.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.habimed.habimedWebService.consultorioServicioU.domain.model.ConsultorioServicioU;
 import com.habimed.habimedWebService.especialidad.domain.model.Especialidad;
 import jakarta.persistence.*;
@@ -20,6 +22,7 @@ public class Servicio {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idespecialidad", referencedColumnName = "idespecialidad")
+    @JsonBackReference
     private Especialidad especialidad;
 
     @Column(name = "nombre", nullable = false, length = 100)
@@ -32,5 +35,6 @@ public class Servicio {
     private String riesgos;
 
     @OneToMany(mappedBy = "servicio", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<ConsultorioServicioU> consultorioServicioU;
 }

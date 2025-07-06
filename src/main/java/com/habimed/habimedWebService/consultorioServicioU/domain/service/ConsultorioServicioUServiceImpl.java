@@ -4,8 +4,11 @@ import com.habimed.habimedWebService.consultorio.domain.model.Consultorio;
 import com.habimed.habimedWebService.consultorio.repository.ConsultorioRepository;
 import com.habimed.habimedWebService.consultorioServicioU.domain.model.ConsultorioServicioU;
 import com.habimed.habimedWebService.consultorioServicioU.dto.ConsultorioServicioUInsertDto;
+import com.habimed.habimedWebService.consultorioServicioU.dto.ConsultorioServicioUResponseDto;
 import com.habimed.habimedWebService.consultorioServicioU.dto.FilterConsultorioServicioUDto;
 import com.habimed.habimedWebService.consultorioServicioU.repository.ConsultorioServicioURepository;
+import com.habimed.habimedWebService.exception.ForbiddenException;
+import com.habimed.habimedWebService.exception.ResourceNotFoundException;
 import com.habimed.habimedWebService.servicio.domain.model.Servicio;
 import com.habimed.habimedWebService.servicio.repository.ServicioRepository;
 import com.habimed.habimedWebService.usuario.domain.model.TipoUsuarioEnum;
@@ -31,37 +34,38 @@ public class ConsultorioServicioUServiceImpl implements ConsultorioServicioUServ
     // private final PasswordEncoder passwordEncoder;
 
     @Override
-    public List<ConsultorioServicioU> findAll() {
-        return consultorioServicioURepository.findAll();
+    public List<ConsultorioServicioUResponseDto> findAll() {
+        List<ConsultorioServicioU> result = consultorioServicioURepository.findAll();
+        return result.stream().map(x -> toDto(x)).collect(Collectors.toList());
     }
 
     @Override
-    public List<ConsultorioServicioU> findAllWithConditions(FilterConsultorioServicioUDto filterConsultorioServicioUDto) {
+    public List<ConsultorioServicioUResponseDto> findAllWithConditions(FilterConsultorioServicioUDto filterConsultorioServicioUDto) {
         // IMPLEMENTACIÓN TEMPORAL (reemplazar con consultas personalizadas del repositorio):
-        List<ConsultorioServicioU> buscando = this.findAll();
+        List<ConsultorioServicioUResponseDto> buscando = this.findAll();
 
         // Filtrar por campos del FilterDto si no son null
         if (filterConsultorioServicioUDto.getIdConsultorio() != null) {
 
             buscando = buscando.stream()
-                    .filter(u -> u.getConsultorio() != null &&
-                            u.getConsultorio().getIdConsultorio().equals(filterConsultorioServicioUDto.getIdConsultorio()))
+                    .filter(u -> u.getIdConsultorio() != null &&
+                            u.getIdConsultorio().equals(filterConsultorioServicioUDto.getIdConsultorio()))
                     .collect(Collectors.toList());
         }
 
 
         if (filterConsultorioServicioUDto.getIdServicio() != null) {
             buscando = buscando.stream()
-                    .filter(u -> u.getServicio() != null &&
-                            u.getServicio().getIdServicio().equals(filterConsultorioServicioUDto.getIdServicio()))
+                    .filter(u -> u.getIdServicio() != null &&
+                            u.getIdServicio().equals(filterConsultorioServicioUDto.getIdServicio()))
                     .collect(Collectors.toList());
         }
 
         if (filterConsultorioServicioUDto.getIdUsuario() != null) {
 
             buscando = buscando.stream()
-                    .filter(u -> u.getUsuario() != null &&
-                            u.getUsuario().getIdUsuario().equals(filterConsultorioServicioUDto.getIdUsuario()))
+                    .filter(u -> u.getIdUsuario() != null &&
+                            u.getIdUsuario().equals(filterConsultorioServicioUDto.getIdUsuario()))
                     .collect(Collectors.toList());
         }
 
@@ -69,12 +73,12 @@ public class ConsultorioServicioUServiceImpl implements ConsultorioServicioUServ
     }
 
     @Override
-    public ConsultorioServicioU getById(Integer id) {
+    public ConsultorioServicioUResponseDto getById(Integer id) {
         Optional<ConsultorioServicioU> target_ = consultorioServicioURepository.findById(id);
         if (target_.isPresent()) {
-            return target_.get();
+            return toDto(target_.get());
         }
-        throw new RuntimeException("Relacion no encontrada con ID: " + id);
+        throw new ResourceNotFoundException("Relacion no encontrada con ID: " + id);
     }
 
     @Override
@@ -82,24 +86,24 @@ public class ConsultorioServicioUServiceImpl implements ConsultorioServicioUServ
         // Verificar que el usuario existe
         Optional<Usuario> usuario = usuarioRepository.findById(consultorioServicioUInsertDto.getIdUsuario());
         if (!usuario.isPresent()) {
-            throw new RuntimeException("No existe un usuario con id: " + consultorioServicioUInsertDto.getIdUsuario());
+            throw new ResourceNotFoundException("No existe un usuario con id: " + consultorioServicioUInsertDto.getIdUsuario());
         }
 
         // Verificar que el usuario sea del tipo DOCTOR
         if (!(usuario.get().getTipoUsuario() == TipoUsuarioEnum.DOCTOR)) {
-            throw new RuntimeException("El usuario no es un DOCTOR, sino un : " + usuario.get().getTipoUsuario());
+            throw new ForbiddenException("El usuario no es un DOCTOR, sino un : " + usuario.get().getTipoUsuario());
         }
 
         // Verificar que el consultorio existe
         Optional<Consultorio> consultorio = consultorioRepository.findById(consultorioServicioUInsertDto.getIdConsultorio());
         if (!consultorio.isPresent()) {
-            throw new RuntimeException("No existe el consultorio con id: " + consultorioServicioUInsertDto.getIdConsultorio());
+            throw new ResourceNotFoundException("No existe el consultorio con id: " + consultorioServicioUInsertDto.getIdConsultorio());
         }
 
         // Verificar que el consultorio existe
         Optional<Servicio> servicio = servicioRepository.findById(consultorioServicioUInsertDto.getIdServicio());
         if (!servicio.isPresent()) {
-            throw new RuntimeException("No existe el servicio con id: " + consultorioServicioUInsertDto.getIdServicio());
+            throw new ResourceNotFoundException("No existe el servicio con id: " + consultorioServicioUInsertDto.getIdServicio());
         }
 
         // Guardamos la nueva relación
@@ -120,10 +124,10 @@ public class ConsultorioServicioUServiceImpl implements ConsultorioServicioUServ
         if (target_.isPresent()) {
 
             consultorioServicioURepository.deleteById(id);
-            return true;
+            return Boolean.TRUE;
         }
 
-        return false;
+        throw new ResourceNotFoundException("No existe la relación con id: " + id);
     }
 
     @Override
@@ -139,7 +143,7 @@ public class ConsultorioServicioUServiceImpl implements ConsultorioServicioUServ
                 // Verificar que el consultorio existe
                 Optional<Consultorio> consultorio = consultorioRepository.findById(consultorioServicioUUpdateDto.getIdConsultorio());
                 if (!consultorio.isPresent()) {
-                    throw new RuntimeException("El consultorio no existe. Id: " + consultorioServicioUUpdateDto.getIdConsultorio());
+                    throw new ResourceNotFoundException("El consultorio no existe. Id: " + consultorioServicioUUpdateDto.getIdConsultorio());
                 }
                 target.setConsultorio(consultorio.get());
 
@@ -150,7 +154,7 @@ public class ConsultorioServicioUServiceImpl implements ConsultorioServicioUServ
                 // Verificar que el servicio existe
                 Optional<Servicio> servicio = servicioRepository.findById(consultorioServicioUUpdateDto.getIdServicio());
                 if (!servicio.isPresent()) {
-                    throw new RuntimeException("El servicio no existe. Id: " + consultorioServicioUUpdateDto.getIdServicio());
+                    throw new ResourceNotFoundException("El servicio no existe. Id: " + consultorioServicioUUpdateDto.getIdServicio());
                 }
                 target.setServicio(servicio.get());
             }
@@ -161,7 +165,7 @@ public class ConsultorioServicioUServiceImpl implements ConsultorioServicioUServ
                 // Verificar que el usuario existe
                 Optional<Usuario> usuario = usuarioRepository.findById(consultorioServicioUUpdateDto.getIdUsuario());
                 if (!usuario.isPresent()) {
-                    throw new RuntimeException("El usuario no existe. Id: " + consultorioServicioUUpdateDto.getIdUsuario());
+                    throw new ResourceNotFoundException("El usuario no existe. Id: " + consultorioServicioUUpdateDto.getIdUsuario());
                 }
                 target.setUsuario(usuario.get());
             }
@@ -170,7 +174,15 @@ public class ConsultorioServicioUServiceImpl implements ConsultorioServicioUServ
             return consultorioServicioURepository.save(target);
         }
         
-        throw new RuntimeException("La relacion no existe con ID: " + id);
+        throw new ResourceNotFoundException("La relacion no existe con ID: " + id);
     }
 
+    public ConsultorioServicioUResponseDto toDto(ConsultorioServicioU entity) {
+        ConsultorioServicioUResponseDto dto = new ConsultorioServicioUResponseDto();
+        dto.setIdConsultorioServicioU(entity.getIdConsultorioServicioU());
+        dto.setIdUsuario(entity.getUsuario() != null ? entity.getUsuario().getIdUsuario() : null);
+        dto.setIdConsultorio(entity.getConsultorio() != null ? entity.getConsultorio().getIdConsultorio() : null);
+        dto.setIdServicio(entity.getServicio() != null ? entity.getServicio().getIdServicio() : null);
+        return dto;
+    }
 }

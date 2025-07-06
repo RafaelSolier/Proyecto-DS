@@ -2,6 +2,9 @@ package com.habimed.habimedWebService.cita.domain.service;
 
 import com.habimed.habimedWebService.consultorioServicioU.domain.model.ConsultorioServicioU;
 import com.habimed.habimedWebService.consultorioServicioU.repository.ConsultorioServicioURepository;
+import com.habimed.habimedWebService.exception.BadRequestException;
+import com.habimed.habimedWebService.exception.ResourceNotFoundException;
+import com.habimed.habimedWebService.usuario.domain.model.TipoUsuarioEnum;
 import com.habimed.habimedWebService.usuario.domain.model.Usuario;
 import com.habimed.habimedWebService.usuario.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
@@ -96,18 +99,23 @@ public class CitaServiceImpl implements CitaService {
     public CitaResponseDto save(CitaInsertDto citaInsertDto) {
         // Validaciones de negocio antes de guardar
         if (citaInsertDto.getFechaHoraInicio() != null && citaInsertDto.getFechaHoraInicio().isBefore(LocalDateTime.now())) {
-            throw new RuntimeException("No se puede crear una cita con fecha pasada");
+            throw new BadRequestException("No se puede crear una cita con fecha pasada");
         }
         
         if (citaInsertDto.getFechaHoraInicio() != null && citaInsertDto.getFechaHoraFin() != null &&
             citaInsertDto.getFechaHoraFin().isBefore(citaInsertDto.getFechaHoraInicio())) {
-            throw new RuntimeException("La fecha de fin no puede ser anterior a la fecha de inicio");
+            throw new BadRequestException("La fecha de fin no puede ser anterior a la fecha de inicio");
         }
         
         Cita cita = modelMapper.map(citaInsertDto, Cita.class);
-        Usuario paciente = usuarioRepository.findById(citaInsertDto.getIdPaciente()).orElseThrow(()->new RuntimeException("No existe el paciente"));
+        Usuario paciente = usuarioRepository.findById(citaInsertDto.getIdPaciente())
+                .orElseThrow(()->new ResourceNotFoundException("No existe el paciente"));
+        if (paciente.getTipoUsuario() != TipoUsuarioEnum.PACIENTE){
+            throw new BadRequestException("El usuario no es un Paciente");
+        }
         cita.setPaciente(paciente);
-        ConsultorioServicioU consul = consultorioServicioURepository.findById(citaInsertDto.getIdConsultorioServicioU()).orElseThrow(()->new RuntimeException("No existe la relación con el consultorio"));
+        ConsultorioServicioU consul = consultorioServicioURepository.findById(citaInsertDto.getIdConsultorioServicioU())
+                .orElseThrow(()->new ResourceNotFoundException("No existe la relación con el consultorio"));
         cita.setConsultorioServicioU(consul);
 
 
@@ -134,7 +142,7 @@ public class CitaServiceImpl implements CitaService {
             if (citaUpdateDto.getFechaHoraInicio() != null) {
                 // Validar que no sea una fecha pasada
                 if (citaUpdateDto.getFechaHoraInicio().isBefore(LocalDateTime.now())) {
-                    throw new RuntimeException("No se puede actualizar a una fecha pasada");
+                    throw new BadRequestException("No se puede actualizar a una fecha pasada");
                 }
                 cita.setFechaHoraInicio(citaUpdateDto.getFechaHoraInicio());
             }
@@ -146,16 +154,20 @@ public class CitaServiceImpl implements CitaService {
             }
             
             // Validar consistencia de fechas después de las actualizaciones
-            if (cita.getFechaHoraFin() != null && cita.getFechaHoraInicio() != null &&
-                cita.getFechaHoraFin().isBefore(cita.getFechaHoraInicio())) {
-                throw new RuntimeException("La fecha de fin no puede ser anterior a la fecha de inicio");
+            if (citaUpdateDto.getFechaHoraFin() != null && citaUpdateDto.getFechaHoraInicio() != null &&
+                citaUpdateDto.getFechaHoraFin().isBefore(citaUpdateDto.getFechaHoraInicio())) {
+                throw new BadRequestException("La fecha de fin no puede ser anterior a la fecha de inicio");
+            }
+
+            if (citaUpdateDto.getDescripcion() != null && !citaUpdateDto.getDescripcion().trim().isEmpty()) {
+                cita.setDescripcion(citaUpdateDto.getDescripcion());
             }
             
             Cita updatedCita = citaRepository.save(cita);
             return mapperCitaResponse(updatedCita);
         }
         
-        throw new RuntimeException("Cita no encontrada con ID: " + id);
+        throw new ResourceNotFoundException("Cita no encontrada con ID: " + id);
     }
 
     @Override

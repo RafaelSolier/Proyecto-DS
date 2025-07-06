@@ -1,5 +1,6 @@
 package com.habimed.habimedWebService.horarioDoctor.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.habimed.habimedWebService.usuario.domain.model.Usuario;
 import jakarta.persistence.*;
 import lombok.*;
@@ -19,6 +20,7 @@ public class HorarioDoctor {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "iddoctor", referencedColumnName = "idusuario", insertable = false, updatable = false)
+    @JsonBackReference
     private Usuario doctor;
 
     @Column(nullable = false)

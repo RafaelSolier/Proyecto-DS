@@ -27,7 +27,7 @@ public class UsuarioInsertDto {
     @Size(max = 255, message = "La contraseña no puede exceder 255 caracteres")
     private String contrasenia;
 
-    private Boolean estado = false;
+    private Boolean estado = true;
 
     private String codigoCMP;
 }

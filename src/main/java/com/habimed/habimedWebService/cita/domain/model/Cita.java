@@ -1,5 +1,7 @@
 package com.habimed.habimedWebService.cita.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.habimed.habimedWebService.consultorioServicioU.domain.model.ConsultorioServicioU;
 import com.habimed.habimedWebService.detallePago.domain.model.DetallePago;
 import com.habimed.habimedWebService.diagnostico.domain.model.Diagnostico;
@@ -7,16 +9,15 @@ import com.habimed.habimedWebService.receta.domain.model.Receta;
 import com.habimed.habimedWebService.recomendacion.domain.model.Recomendacion;
 import com.habimed.habimedWebService.usuario.domain.model.Usuario;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Cita {
@@ -27,7 +28,8 @@ public class Cita {
     private Integer idCita;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "idpaciente", referencedColumnName = "idusuario", insertable = false, updatable = false)
+    @JoinColumn(name = "idpaciente", referencedColumnName = "idusuario")
+    @JsonBackReference("cita-paciente")
     private Usuario paciente;
 
     @Column(name = "motivo", nullable = false, length = 255)
@@ -60,9 +62,11 @@ public class Cita {
 
     // Relación One-to-One con DetallePago
     @OneToOne(mappedBy = "cita", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
     private DetallePago detallePago;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idconsultorioserviciouser", referencedColumnName = "idconsultorioserviciouser", nullable = false)
+    @JsonBackReference
     private ConsultorioServicioU consultorioServicioU;
 }

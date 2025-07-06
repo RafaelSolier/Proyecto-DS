@@ -1,6 +1,7 @@
 package com.habimed.habimedWebService.usuario.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.habimed.habimedWebService.cita.domain.model.Cita;
 import com.habimed.habimedWebService.consultorio.domain.model.Consultorio;
 import com.habimed.habimedWebService.consultorioServicioU.domain.model.ConsultorioServicioU;
@@ -13,7 +14,8 @@ import lombok.*;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Usuario {
@@ -25,7 +27,7 @@ public class Usuario {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idpersona", nullable = false)
-    @JsonBackReference
+    @JsonBackReference("usuario-persona")
     private Persona persona;
 
     @Column(name = "tipousuario", nullable = false)
@@ -38,19 +40,22 @@ public class Usuario {
     @Column(name = "contrasenia", nullable = false)
     private String contrasenia;
 
-    @Column(name = "estado", nullable = false)
-    private Boolean estado = false;
+    @Column(name = "estado", nullable = false)          // true = Cuenta activa, false = usuario eliminado
+    private Boolean estado = true;
 
     @Column(name = "codigo_cmp", unique = true, nullable = true, length = 20)
     private String codigoCMP; // Código del Colegio Médico del Perú
 
     // Relaciones inversas
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonBackReference
     private List<HorarioDoctor> horarios;
 
     @OneToMany(mappedBy = "paciente", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference("cita-paciente")
     private List<Cita> citasComoPaciente;
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<ConsultorioServicioU> consultorioServicioU;
 }

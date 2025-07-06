@@ -15,4 +15,6 @@ public class CitaUpdateDto {
     private LocalDateTime fechaHoraFin;
 
     private EstadoCitaEnum estado;
+
+    private String descripcion;
 }

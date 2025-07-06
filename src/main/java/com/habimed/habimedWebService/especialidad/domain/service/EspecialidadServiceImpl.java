@@ -1,5 +1,6 @@
 package com.habimed.habimedWebService.especialidad.domain.service;
 
+import com.habimed.habimedWebService.exception.ConflictException;
 import com.habimed.habimedWebService.servicio.domain.service.ServicioService;
 import com.habimed.habimedWebService.servicio.dto.ServicioFilterDto;
 import com.habimed.habimedWebService.servicio.dto.ServicioResponseDto;
@@ -77,7 +78,7 @@ public class EspecialidadServiceImpl implements EspecialidadService {
                         e.getNombre().equalsIgnoreCase(especialidadInsertDto.getNombre().trim()));
         
         if (nombreExists) {
-            throw new RuntimeException("Ya existe una especialidad con el nombre: " + 
+            throw new ConflictException("Ya existe una especialidad con el nombre: " +
                     especialidadInsertDto.getNombre());
         }
 

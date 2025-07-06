@@ -73,6 +73,9 @@ public class PersonaServiceImpl implements PersonaService {
     public PersonaResponseDto save(PersonaInsertDto personaInsertDto) {
 
         Persona persona = modelMapper.map(personaInsertDto, Persona.class);
+        if (!personaRepository.findByDni(persona.getDni()).isEmpty()) {
+            throw new RuntimeException("Persona ya existe");
+        }
         persona.setId(null);
         Persona savedPersona = personaRepository.save(persona);
         return modelMapper.map(savedPersona, PersonaResponseDto.class);

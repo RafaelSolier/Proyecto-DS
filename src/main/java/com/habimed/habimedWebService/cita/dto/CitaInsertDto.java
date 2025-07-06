@@ -15,12 +15,11 @@ public class CitaInsertDto {
     private Integer idConsultorioServicioU;
     @NotBlank
     private String motivo;
-
-    @NotBlank
+    @NotNull
     private LocalDateTime fechaHoraInicio;
-    @NotBlank
+    @NotNull
     private LocalDateTime fechaHoraFin;
-    @NotBlank
+    @NotNull
     private EstadoCitaEnum estado;
     @NotBlank
     private String descripcion;

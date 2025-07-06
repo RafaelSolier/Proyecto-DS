@@ -5,6 +5,7 @@ import java.time.LocalDate;
 
 @Data
 public class PersonaResponseDto {
+    private Integer id;
     private String dni;
     private String nombres;
     private String apellidos;

@@ -1,5 +1,6 @@
 package com.habimed.habimedWebService.consultorio.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.habimed.habimedWebService.consultorioServicioU.domain.model.ConsultorioServicioU;
 import jakarta.persistence.*;
 import lombok.*;
@@ -39,6 +40,7 @@ public class Consultorio {
     private Boolean estado = true; // true=activo, false=eliminado lógico
 
     @OneToMany(mappedBy = "consultorio", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<ConsultorioServicioU> consultorioServicioU;
 
 }

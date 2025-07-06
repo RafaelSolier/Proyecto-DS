@@ -2,9 +2,11 @@ package com.habimed.habimedWebService.servicio.domain.service;
 
 import com.habimed.habimedWebService.consultorioServicioU.domain.model.ConsultorioServicioU;
 import com.habimed.habimedWebService.consultorioServicioU.domain.service.ConsultorioServicioUService;
+import com.habimed.habimedWebService.consultorioServicioU.dto.ConsultorioServicioUResponseDto;
 import com.habimed.habimedWebService.consultorioServicioU.dto.FilterConsultorioServicioUDto;
 import com.habimed.habimedWebService.especialidad.domain.model.Especialidad;
 import com.habimed.habimedWebService.especialidad.repository.EspecialidadRepository;
+import com.habimed.habimedWebService.exception.ResourceNotFoundException;
 import com.habimed.habimedWebService.servicio.domain.model.Servicio;
 import com.habimed.habimedWebService.servicio.dto.ServicioFilterDto;
 import com.habimed.habimedWebService.servicio.dto.ServicioInsertDto;
@@ -88,7 +90,7 @@ public class ServicioServiceImpl implements ServicioService {
         // Verificar que la especialidad existe
         Optional<Especialidad> especialidad = especialidadRepository.findById(servicioInsertDto.getIdEspecialidad());
         if (!especialidad.isPresent()) {
-            throw new RuntimeException("No existe una especialidad con ID: " + servicioInsertDto.getIdEspecialidad());
+            throw new ResourceNotFoundException("No existe una especialidad con ID: " + servicioInsertDto.getIdEspecialidad());
         }
         
         Especialidad especialidadEntity = especialidad.get();
@@ -110,6 +112,11 @@ public class ServicioServiceImpl implements ServicioService {
             Servicio servicio = existingServicio.get();
             
             // Actualizar solo los campos que no son null en el DTO
+            if (servicioUpdateDto.getIdEspecialidad() != null) {
+                Especialidad especialidad = especialidadRepository.findById(servicioUpdateDto.getIdEspecialidad())
+                        .orElseThrow(()-> new ResourceNotFoundException("No existe una especialidad con ID: " + servicioUpdateDto.getIdEspecialidad()));
+                servicio.setEspecialidad(especialidad);
+            }
             if (servicioUpdateDto.getNombre() != null && !servicioUpdateDto.getNombre().trim().isEmpty()) {
 
                 servicio.setNombre(servicioUpdateDto.getNombre());
@@ -139,7 +146,7 @@ public class ServicioServiceImpl implements ServicioService {
             return responseDto;
         }
         
-        throw new RuntimeException("Servicio no encontrado con ID: " + id);
+        throw new ResourceNotFoundException("Servicio no encontrado con ID: " + id);
     }
 
     @Override
@@ -151,7 +158,7 @@ public class ServicioServiceImpl implements ServicioService {
 
             FilterConsultorioServicioUDto dto = new FilterConsultorioServicioUDto();
             dto.setIdServicio(servicioEntity.getIdServicio());
-            List<ConsultorioServicioU> relaciones = consultorioServicioUService.findAllWithConditions(dto);
+            List<ConsultorioServicioUResponseDto> relaciones = consultorioServicioUService.findAllWithConditions(dto);
             if (!relaciones.isEmpty()) {  // Verifica si la lista no está vacía
                 relaciones.forEach(relacion -> {
                     consultorioServicioUService.delete(relacion.getIdConsultorioServicioU());

@@ -1,5 +1,6 @@
 package com.habimed.habimedWebService.consultorio.dto;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -15,12 +16,10 @@ public class ConsultorioInsertDto {
     @Size(max = 45, message = "El nombre no puede exceder 45 caracteres")
     private String nombre;
 
-    @NotBlank(message = "La latitud es obligatoria")
-    @Size(max = 45, message = "La latitud no puede exceder 45 caracteres")
+    @NotNull(message = "La latitud es obligatoria")
     private Double latitud;
 
-    @NotBlank(message = "La longitud es obligatoria")
-    @Size(max = 45, message = "La longitud no puede exceder 45 caracteres")
+    @NotNull(message = "La longitud es obligatoria")
     private Double longitud;
 
     @Size(max = 45, message = "La dirección no puede exceder 45 caracteres")
