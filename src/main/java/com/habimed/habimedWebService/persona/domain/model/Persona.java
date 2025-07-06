@@ -1,5 +1,7 @@
 package com.habimed.habimedWebService.persona.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.habimed.habimedWebService.usuario.domain.model.Usuario;
 import jakarta.persistence.*;
 
@@ -9,7 +11,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Persona {
@@ -19,7 +22,7 @@ public class Persona {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "dni", nullable = false, length = 10)
+    @Column(name = "dni", nullable = false, length = 10, unique = true)
     private String dni;
 
     @Column(name = "nombres", nullable = false, length = 45)
@@ -38,6 +41,7 @@ public class Persona {
     private LocalDate fechaNacimiento;
 
     // Relación inversa One-to-Many con Usuario
-    @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Usuario> usuarios;
 }

@@ -7,15 +7,6 @@ import java.time.LocalDateTime;
 
 @Data
 public class CitaUpdateDto {
-    private Integer idcita;
-
-    private Integer idservicio;
-
-    private Integer idconsultorio;
-
-    private Integer idmedico;
-
-    private String dniPersona;
 
     private String motivo;
 

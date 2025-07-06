@@ -30,15 +30,15 @@ public class DiagnosticoController {
         }
     }
 
-    @PostMapping("/filter")
-    public ResponseEntity<List<Diagnostico>> getDiagnosticosWithFilter(@Valid @RequestBody DiagnosticoFilterDto filterDto) {
-        try {
-            List<Diagnostico> diagnosticos = diagnosticoService.findAllWithConditions(filterDto);
-            return ResponseEntity.ok(diagnosticos);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
+//    @PostMapping("/filter")
+//    public ResponseEntity<List<Diagnostico>> getDiagnosticosWithFilter(@Valid @RequestBody DiagnosticoFilterDto filterDto) {
+//        try {
+//            List<Diagnostico> diagnosticos = diagnosticoService.findAllWithConditions(filterDto);
+//            return ResponseEntity.ok(diagnosticos);
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+//        }
+//    }
 
     @GetMapping("/{id}")
     public ResponseEntity<DiagnosticoResponseDto> getDiagnosticoById(@PathVariable Integer id) {

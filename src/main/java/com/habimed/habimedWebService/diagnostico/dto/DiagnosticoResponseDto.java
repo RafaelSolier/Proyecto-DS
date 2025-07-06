@@ -13,7 +13,4 @@ public class DiagnosticoResponseDto {
     private Integer idCita;
     private String descripcion;
     private LocalDate fechaDiagnostico;
-    private String nombreDoctor;
-    private String nombrePaciente;
-    private String motivoCita;
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import com.habimed.habimedWebService.especialidad.domain.model.Especialidad;
 import com.habimed.habimedWebService.especialidad.domain.service.EspecialidadService;
 import com.habimed.habimedWebService.especialidad.dto.*;
+import com.habimed.habimedWebService.exception.ConflictException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -58,7 +59,7 @@ public class EspecialidadController {
             EspecialidadResponseDto createdEspecialidad = especialidadService.save(especialidadInsertDto);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdEspecialidad);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            throw new ConflictException(e.getMessage());
         }
     }
 

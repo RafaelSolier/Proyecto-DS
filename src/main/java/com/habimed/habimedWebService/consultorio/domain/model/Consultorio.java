@@ -1,5 +1,6 @@
 package com.habimed.habimedWebService.consultorio.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.habimed.habimedWebService.consultorioServicioU.domain.model.ConsultorioServicioU;
 import jakarta.persistence.*;
 import lombok.*;
@@ -38,8 +39,8 @@ public class Consultorio {
     @Column(name = "estado", nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
     private Boolean estado = true; // true=activo, false=eliminado lógico
 
-    // Relación One-to-Many con Usuario (doctores)
     @OneToMany(mappedBy = "consultorio", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<ConsultorioServicioU> consultorioServicioU;
 
 }

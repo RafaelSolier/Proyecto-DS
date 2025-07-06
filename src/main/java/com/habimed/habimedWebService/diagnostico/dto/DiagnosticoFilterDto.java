@@ -11,7 +11,6 @@ import java.time.LocalDate;
 public class DiagnosticoFilterDto {
     private Integer idDiagnostico;
     private Integer idCita;
-    private String descripcionContiene;
     private LocalDate fechaDiagnosticoInicio;
     private LocalDate fechaDiagnosticoFin;
 }

@@ -9,10 +9,8 @@ import com.habimed.habimedWebService.receta.dto.RecetaInsertDto;
 import com.habimed.habimedWebService.receta.dto.RecetaResponseDto;
 import com.habimed.habimedWebService.receta.dto.RecetaUpdateDto;
 import com.habimed.habimedWebService.receta.repository.RecetaRepository;
-import com.habimed.habimedWebService.usuario.domain.model.TipoUsuarioEnum;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -108,7 +106,7 @@ public class RecetaServiceImpl implements RecetaService {
             throw new RuntimeException("No se puede crear una receta para una cita que aún no ha ocurrido");
         }
         
-        // Verificar que el doctor esté asignado a la cita
+        /* // Verificar que el doctor esté asignado a la cita
         if (citaEntity.getDoctor() == null) {
             throw new RuntimeException("No se puede crear una receta para una cita sin doctor asignado");
         }
@@ -116,7 +114,7 @@ public class RecetaServiceImpl implements RecetaService {
         // Validar que el doctor sea realmente un doctor
         if (citaEntity.getDoctor().getTipoUsuario() != TipoUsuarioEnum.DOCTOR) {
             throw new RuntimeException("Solo un doctor puede crear recetas médicas");
-        }
+        } */
         
         // Verificar si ya existe una receta para esta cita (opcional - podría permitirse múltiples recetas)
         List<Receta> recetasExistentes = recetaRepository.findAll();
@@ -160,7 +158,7 @@ public class RecetaServiceImpl implements RecetaService {
         
         // Normalizar y limpiar la descripción
         receta.setDescripcion(normalizarDescripcion(receta.getDescripcion()));
-        
+        receta.setIdReceta(null);
         Receta savedReceta = recetaRepository.save(receta);
         return mapToResponseDto(savedReceta);
     }
@@ -292,11 +290,12 @@ public class RecetaServiceImpl implements RecetaService {
     }
     
     public List<Receta> getRecetasPorDoctor(Integer idDoctor) {
-        return recetaRepository.findAll().stream()
+        /* return recetaRepository.findAll().stream()
                 .filter(r -> r.getCita() != null && 
                         r.getCita().getDoctor() != null &&
                         r.getCita().getDoctor().getIdUsuario().equals(idDoctor))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()); */
+        return null;
     }
     
     public List<Receta> getRecetasPorPaciente(Integer idPaciente) {
@@ -331,13 +330,13 @@ public class RecetaServiceImpl implements RecetaService {
             responseDto.setIdCita(receta.getCita().getIdCita());
             responseDto.setMotivoCita(receta.getCita().getMotivo());
             
-            // Agregar información del doctor
+            /* // Agregar información del doctor
             if (receta.getCita().getDoctor() != null && 
                 receta.getCita().getDoctor().getPersona() != null) {
                 String nombreDoctor = receta.getCita().getDoctor().getPersona().getNombres() + 
                         " " + receta.getCita().getDoctor().getPersona().getApellidos();
                 responseDto.setNombreDoctor(nombreDoctor);
-            }
+            } */
             
             // Agregar información del paciente
             if (receta.getCita().getPaciente() != null && 

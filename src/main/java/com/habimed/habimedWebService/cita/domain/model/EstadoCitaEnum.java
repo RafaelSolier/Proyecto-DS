@@ -6,5 +6,5 @@ public enum EstadoCitaEnum {
     PAGADA,        // Cuando se completa el pago
     MODIFICADA,    // Cuando se modifica la cita
     REALIZADA,     // Cuando se completa la cita
-    CANCELADA      // Cuando se cancela la cita
+    CANCELADA      // Cuando se cancela o elimina la cita
 }

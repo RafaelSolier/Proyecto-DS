@@ -1,7 +1,6 @@
 package com.habimed.habimedWebService.detallePago.dto;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 import com.habimed.habimedWebService.detallePago.domain.model.EstadoPagoEnum;
 import com.habimed.habimedWebService.detallePago.domain.model.MetodoPagoEnum;
@@ -30,6 +29,4 @@ public class DetallePagoCreateDto {
     @NotBlank(message = "El estado de pago no puede estar vacío")
     private EstadoPagoEnum estadoPago;
 
-    @NotNull(message = "La fecha de pago no puede ser nula")
-    private LocalDateTime fechaPago = LocalDateTime.now();
 }

@@ -13,7 +13,6 @@ import com.habimed.habimedWebService.cita.domain.model.Cita;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,50 +27,50 @@ public class DiagnosticoServiceImpl implements DiagnosticoService {
         return diagnosticoRepository.findAll();
     }
 
-    @Override
-    public List<Diagnostico> findAllWithConditions(DiagnosticoFilterDto diagnosticoFilterDto) {
-        // IMPLEMENTACIÓN TEMPORAL (reemplazar con consultas personalizadas del repositorio):
-        List<Diagnostico> diagnosticos = diagnosticoRepository.findAll();
-        
-        // Filtrar por campos del FilterDto si no son null
-        if (diagnosticoFilterDto.getIdDiagnostico() != null) {
-            diagnosticos = diagnosticos.stream()
-                    .filter(d -> d.getIdDiagnostico().equals(diagnosticoFilterDto.getIdDiagnostico()))
-                    .collect(Collectors.toList());
-        }
-        
-        if (diagnosticoFilterDto.getIdCita() != null) {
-            diagnosticos = diagnosticos.stream()
-                    .filter(d -> d.getCita() != null && 
-                            d.getCita().getIdCita().equals(diagnosticoFilterDto.getIdCita()))
-                    .collect(Collectors.toList());
-        }
-        
-        if (diagnosticoFilterDto.getDescripcionContiene() != null && 
-            !diagnosticoFilterDto.getDescripcionContiene().trim().isEmpty()) {
-            diagnosticos = diagnosticos.stream()
-                    .filter(d -> d.getDescripcion() != null && 
-                            d.getDescripcion().toLowerCase().contains(
-                                    diagnosticoFilterDto.getDescripcionContiene().toLowerCase()))
-                    .collect(Collectors.toList());
-        }
-        
-        if (diagnosticoFilterDto.getFechaDiagnosticoInicio() != null) {
-            diagnosticos = diagnosticos.stream()
-                    .filter(d -> d.getFechaDiagnostico() != null && 
-                            !d.getFechaDiagnostico().isBefore(diagnosticoFilterDto.getFechaDiagnosticoInicio()))
-                    .collect(Collectors.toList());
-        }
-        
-        if (diagnosticoFilterDto.getFechaDiagnosticoFin() != null) {
-            diagnosticos = diagnosticos.stream()
-                    .filter(d -> d.getFechaDiagnostico() != null && 
-                            !d.getFechaDiagnostico().isAfter(diagnosticoFilterDto.getFechaDiagnosticoFin()))
-                    .collect(Collectors.toList());
-        }
-        
-        return diagnosticos;
-    }
+//    @Override
+//    public List<Diagnostico> findAllWithConditions(DiagnosticoFilterDto diagnosticoFilterDto) {
+//        // IMPLEMENTACIÓN TEMPORAL (reemplazar con consultas personalizadas del repositorio):
+//        List<Diagnostico> diagnosticos = diagnosticoRepository.findAll();
+//
+//        // Filtrar por campos del FilterDto si no son null
+//        if (diagnosticoFilterDto.getIdDiagnostico() != null) {
+//            diagnosticos = diagnosticos.stream()
+//                    .filter(d -> d.getIdDiagnostico().equals(diagnosticoFilterDto.getIdDiagnostico()))
+//                    .collect(Collectors.toList());
+//        }
+//
+//        if (diagnosticoFilterDto.getIdCita() != null) {
+//            diagnosticos = diagnosticos.stream()
+//                    .filter(d -> d.getCita() != null &&
+//                            d.getCita().getIdCita().equals(diagnosticoFilterDto.getIdCita()))
+//                    .collect(Collectors.toList());
+//        }
+//
+//        if (diagnosticoFilterDto.getDescripcionContiene() != null &&
+//            !diagnosticoFilterDto.getDescripcionContiene().trim().isEmpty()) {
+//            diagnosticos = diagnosticos.stream()
+//                    .filter(d -> d.getDescripcion() != null &&
+//                            d.getDescripcion().toLowerCase().contains(
+//                                    diagnosticoFilterDto.getDescripcionContiene().toLowerCase()))
+//                    .collect(Collectors.toList());
+//        }
+//
+//        if (diagnosticoFilterDto.getFechaDiagnosticoInicio() != null) {
+//            diagnosticos = diagnosticos.stream()
+//                    .filter(d -> d.getFechaDiagnostico() != null &&
+//                            !d.getFechaDiagnostico().isBefore(diagnosticoFilterDto.getFechaDiagnosticoInicio()))
+//                    .collect(Collectors.toList());
+//        }
+//
+//        if (diagnosticoFilterDto.getFechaDiagnosticoFin() != null) {
+//            diagnosticos = diagnosticos.stream()
+//                    .filter(d -> d.getFechaDiagnostico() != null &&
+//                            !d.getFechaDiagnostico().isAfter(diagnosticoFilterDto.getFechaDiagnosticoFin()))
+//                    .collect(Collectors.toList());
+//        }
+//
+//        return diagnosticos;
+//    }
 
     @Override
     public DiagnosticoResponseDto getById(Integer id) {
@@ -102,16 +101,16 @@ public class DiagnosticoServiceImpl implements DiagnosticoService {
             throw new RuntimeException("No se puede crear un diagnóstico para una cita futura");
         }
         
-        // Verificar que no exista ya un diagnóstico para esta cita (regla de negocio opcional)
-        List<Diagnostico> existingDiagnosticos = diagnosticoRepository.findAll();
-        boolean diagnosticoExists = existingDiagnosticos.stream()
-                .anyMatch(d -> d.getCita() != null && 
-                        d.getCita().getIdCita().equals(diagnosticoInsertDto.getIdCita()));
-        
-        if (diagnosticoExists) {
-            throw new RuntimeException("Ya existe un diagnóstico para la cita con ID: " + 
-                    diagnosticoInsertDto.getIdCita());
-        }
+//        // Verificar que no exista ya un diagnóstico para esta cita (regla de negocio opcional)
+//        List<Diagnostico> existingDiagnosticos = diagnosticoRepository.findAll();
+//        boolean diagnosticoExists = existingDiagnosticos.stream()
+//                .anyMatch(d -> d.getCita() != null &&
+//                        d.getCita().getIdCita().equals(diagnosticoInsertDto.getIdCita()));
+//
+//        if (diagnosticoExists) {
+//            throw new RuntimeException("Ya existe un diagnóstico para la cita con ID: " +
+//                    diagnosticoInsertDto.getIdCita());
+//        }
         
         Diagnostico diagnostico = modelMapper.map(diagnosticoInsertDto, Diagnostico.class);
         diagnostico.setCita(citaEntity);
@@ -120,7 +119,7 @@ public class DiagnosticoServiceImpl implements DiagnosticoService {
         if (diagnostico.getFechaDiagnostico() == null) {
             diagnostico.setFechaDiagnostico(LocalDate.now());
         }
-        
+        diagnostico.setIdDiagnostico(null);
         Diagnostico savedDiagnostico = diagnosticoRepository.save(diagnostico);
         return mapToResponseDto(savedDiagnostico);
     }
@@ -132,11 +131,11 @@ public class DiagnosticoServiceImpl implements DiagnosticoService {
         if (existingDiagnostico.isPresent()) {
             Diagnostico diagnostico = existingDiagnostico.get();
             
-            // Verificar que el diagnóstico no sea muy antiguo (regla de negocio opcional)
-            if (diagnostico.getFechaDiagnostico() != null && 
-                diagnostico.getFechaDiagnostico().isBefore(LocalDate.now().minusDays(30))) {
-                throw new RuntimeException("No se puede modificar un diagnóstico con más de 30 días de antigüedad");
-            }
+//            // Verificar que el diagnóstico no sea muy antiguo (regla de negocio opcional)
+//            if (diagnostico.getFechaDiagnostico() != null &&
+//                diagnostico.getFechaDiagnostico().isBefore(LocalDate.now().minusDays(30))) {
+//                throw new RuntimeException("No se puede modificar un diagnóstico con más de 30 días de antigüedad");
+//            }
             
             // Actualizar solo los campos que no son null en el DTO
             if (diagnosticoUpdateDto.getDescripcion() != null && 
@@ -168,35 +167,19 @@ public class DiagnosticoServiceImpl implements DiagnosticoService {
             
             // En un sistema real, podrías querer hacer un soft delete en lugar de eliminar físicamente
             diagnosticoRepository.deleteById(id);
-            return true;
+            return Boolean.TRUE;
         }
         
-        return false;
+        return Boolean.FALSE;
     }
 
-    // Método helper para mapear a ResponseDto con información adicional
+
     private DiagnosticoResponseDto mapToResponseDto(Diagnostico diagnostico) {
         DiagnosticoResponseDto responseDto = modelMapper.map(diagnostico, DiagnosticoResponseDto.class);
         
         // Agregar información adicional de la cita si está disponible
         if (diagnostico.getCita() != null) {
             responseDto.setIdCita(diagnostico.getCita().getIdCita());
-            responseDto.setMotivoCita(diagnostico.getCita().getMotivo());
-            
-            // Agregar información del doctor y paciente si están disponibles
-            if (diagnostico.getCita().getDoctor() != null && 
-                diagnostico.getCita().getDoctor().getPersona() != null) {
-                String nombreDoctor = diagnostico.getCita().getDoctor().getPersona().getNombres() + 
-                        " " + diagnostico.getCita().getDoctor().getPersona().getApellidos();
-                responseDto.setNombreDoctor(nombreDoctor);
-            }
-            
-            if (diagnostico.getCita().getPaciente() != null && 
-                diagnostico.getCita().getPaciente().getPersona() != null) {
-                String nombrePaciente = diagnostico.getCita().getPaciente().getPersona().getNombres() + 
-                        " " + diagnostico.getCita().getPaciente().getPersona().getApellidos();
-                responseDto.setNombrePaciente(nombrePaciente);
-            }
         }
         
         return responseDto;

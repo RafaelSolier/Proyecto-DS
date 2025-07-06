@@ -12,11 +12,9 @@ import com.habimed.habimedWebService.usuario.domain.model.Usuario;
 import com.habimed.habimedWebService.usuario.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
@@ -177,7 +175,7 @@ public class ReseniaServiceImpl implements ReseniaService {
         
         // Redondear calificación a un decimal
         resenia.setCalificacion(resenia.getCalificacion());
-        
+        resenia.setIdResenia(null);
         Resenia savedResenia = reseniaRepository.save(resenia);
         
         // Actualizar estadísticas del doctor (esto se podría hacer de manera asíncrona)

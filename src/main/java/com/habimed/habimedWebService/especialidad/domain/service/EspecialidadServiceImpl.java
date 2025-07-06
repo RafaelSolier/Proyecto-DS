@@ -1,6 +1,6 @@
 package com.habimed.habimedWebService.especialidad.domain.service;
 
-import com.habimed.habimedWebService.servicio.domain.model.Servicio;
+import com.habimed.habimedWebService.exception.ConflictException;
 import com.habimed.habimedWebService.servicio.domain.service.ServicioService;
 import com.habimed.habimedWebService.servicio.dto.ServicioFilterDto;
 import com.habimed.habimedWebService.servicio.dto.ServicioResponseDto;
@@ -78,7 +78,7 @@ public class EspecialidadServiceImpl implements EspecialidadService {
                         e.getNombre().equalsIgnoreCase(especialidadInsertDto.getNombre().trim()));
         
         if (nombreExists) {
-            throw new RuntimeException("Ya existe una especialidad con el nombre: " + 
+            throw new ConflictException("Ya existe una especialidad con el nombre: " +
                     especialidadInsertDto.getNombre());
         }
 
@@ -89,7 +89,7 @@ public class EspecialidadServiceImpl implements EspecialidadService {
         if (especialidad.getDescripcion() != null && !especialidad.getDescripcion().trim().isEmpty()) {
             especialidad.setDescripcion(especialidad.getDescripcion().trim());
         }
-        
+        especialidad.setIdEspecialidad(null);
         Especialidad savedEspecialidad = especialidadRepository.save(especialidad);
         return modelMapper.map(savedEspecialidad, EspecialidadResponseDto.class);
     }

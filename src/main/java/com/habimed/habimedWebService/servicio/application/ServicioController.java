@@ -1,5 +1,6 @@
 package com.habimed.habimedWebService.servicio.application;
 
+import com.habimed.habimedWebService.exception.ResourceNotFoundException;
 import com.habimed.habimedWebService.servicio.dto.*;
 import com.habimed.habimedWebService.servicio.domain.model.Servicio;
 import jakarta.validation.Valid;
@@ -59,17 +60,19 @@ public class ServicioController {
             ServicioResponseDto createdServicio = servicioService.save(servicioInsertDto);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdServicio);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            if (e instanceof ResourceNotFoundException){ throw new ResourceNotFoundException(e.getMessage());}
+            else { return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();}
         }
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<ServicioResponseDto> updateServicio(@PathVariable Integer id,
                                                               @Valid @RequestBody ServicioUpdateDto servicioUpdateDto) {
         try {
             ServicioResponseDto updatedServicio = servicioService.update(id, servicioUpdateDto);
             return ResponseEntity.ok(updatedServicio);
         } catch (Exception e) {
+            if (e instanceof ResourceNotFoundException){ throw new ResourceNotFoundException(e.getMessage());}
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

@@ -11,7 +11,6 @@ import com.habimed.habimedWebService.horarioDoctor.repository.HorarioDoctorRepos
 import com.habimed.habimedWebService.usuario.repository.UsuarioRepository;
 import com.habimed.habimedWebService.usuario.domain.model.Usuario;
 
-import java.lang.constant.Constable;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
@@ -92,11 +91,6 @@ public class HorarioDoctorServiceImpl implements HorarioDoctorService {
 
     @Override
     public HorarioDoctorResponseDto save(HorarioDoctorInsertDto horarioDoctorInsertDto) {
-        // Validaciones específicas del contexto de horarios médicos
-        if (horarioDoctorInsertDto.getIdDoctor() == null) {
-            throw new RuntimeException("El ID del doctor es obligatorio");
-        }
-        
         // Verificar que el doctor existe
         Optional<Usuario> doctor = usuarioRepository.findById(horarioDoctorInsertDto.getIdDoctor());
         if (!doctor.isPresent()) {
@@ -130,24 +124,16 @@ public class HorarioDoctorServiceImpl implements HorarioDoctorService {
             
             List<HorarioDoctor> horariosExistentes = horarioDoctorRepository.findAll();
             boolean hayConflicto = horariosExistentes.stream()
-                    .anyMatch(h -> h.getDoctor() != null && 
-                            h.getDoctor().getIdUsuario().equals(horarioDoctorInsertDto.getIdDoctor()) &&
-                            h.getDiaSemana() != null &&
-                            h.getDiaSemana().name().equalsIgnoreCase(diaBuscado) &&
-                            hayConflictoHorario(h, horarioDoctorInsertDto.getHoraInicio(), horarioDoctorInsertDto.getHoraFin()));
-            
+                   .anyMatch(h -> h.getDoctor() != null && 
+                           h.getDoctor().getIdUsuario().equals(horarioDoctorInsertDto.getIdDoctor()) &&
+                           h.getDiaSemana() != null &&
+                           h.getDiaSemana().name().equalsIgnoreCase(diaBuscado) &&
+                           hayConflictoHorario(h, horarioDoctorInsertDto.getHoraInicio(), horarioDoctorInsertDto.getHoraFin()));
+
             if (hayConflicto) {
                 throw new RuntimeException("Ya existe un horario conflictivo para el doctor en el día " + 
                         horarioDoctorInsertDto.getDiaSemana());
             }
-        }
-        
-        // Calcular duración en minutos automáticamente
-        if (horarioDoctorInsertDto.getHoraInicio() != null && horarioDoctorInsertDto.getHoraFin() != null) {
-            long duracionMinutos = calcularDuracionMinutos(
-                    horarioDoctorInsertDto.getHoraInicio(), 
-                    horarioDoctorInsertDto.getHoraFin());
-            horarioDoctorInsertDto.setDuracionMinutos((int) duracionMinutos);
         }
         
         HorarioDoctor horarioDoctor = modelMapper.map(horarioDoctorInsertDto, HorarioDoctor.class);
@@ -157,7 +143,7 @@ public class HorarioDoctorServiceImpl implements HorarioDoctorService {
         if (horarioDoctor.getDiaSemana() != null) {
             horarioDoctor.setDiaSemana(normalizarDiaSemana(String.valueOf(horarioDoctor.getDiaSemana())));
         }
-        
+        horarioDoctor.setIdHorarioDoctor(null);
         HorarioDoctor savedHorarioDoctor = horarioDoctorRepository.save(horarioDoctor);
         return mapToResponseDto(savedHorarioDoctor);
     }
@@ -178,35 +164,31 @@ public class HorarioDoctorServiceImpl implements HorarioDoctorService {
             }
             
             // Actualizar horarios
-            LocalDateTime nuevaHoraInicio = horarioDoctorUpdateDto.getHoraInicio() != null ?
-                    horarioDoctorUpdateDto.getHoraInicio() : horarioDoctor.getHoraInicio();
-            LocalDateTime nuevaHoraFin = horarioDoctorUpdateDto.getHoraFin() != null ?
-                    horarioDoctorUpdateDto.getHoraFin() : horarioDoctor.getHoraFin();
+            LocalDateTime nuevaHoraInicio = horarioDoctorUpdateDto.getHoraInicio();
+            LocalDateTime nuevaHoraFin = horarioDoctorUpdateDto.getHoraFin();
             
             // Validar horarios lógicos
-            if (nuevaHoraInicio != null && nuevaHoraFin != null) {
-                if (!nuevaHoraInicio.isBefore(nuevaHoraFin)) {
-                    throw new RuntimeException("La hora de inicio debe ser anterior a la hora de fin");
-                }
-                
-                // Verificar conflictos de horarios
-                String diaActual = horarioDoctorUpdateDto.getDiaSemana() != null ? 
-                        horarioDoctorUpdateDto.getDiaSemana() : String.valueOf(horarioDoctor.getDiaSemana());
-                
-                if (diaActual != null && horarioDoctor.getDoctor() != null) {
-                    List<HorarioDoctor> horariosExistentes = horarioDoctorRepository.findAll();
-                    boolean hayConflicto = horariosExistentes.stream()
-                            .anyMatch(h -> !h.getIdHorarioDoctor().equals(horarioDoctor.getIdHorarioDoctor()) &&
-                                    h.getDoctor() != null && 
-                                    h.getDoctor().getIdUsuario().equals(horarioDoctor.getDoctor().getIdUsuario()) &&
-                                    h.getDiaSemana() != null &&
-                                    h.getDiaSemana().name().equalsIgnoreCase(diaActual) &&
-                                    hayConflictoHorario(h, nuevaHoraInicio, nuevaHoraFin));
-                    
-                    if (hayConflicto) {
-                        throw new RuntimeException("El horario actualizado genera conflicto con otro horario existente");
-                    }
-                }
+            if (!nuevaHoraInicio.isBefore(nuevaHoraFin)) {
+                throw new RuntimeException("La hora de inicio debe ser anterior a la hora de fin");
+            }
+            
+            // Verificar conflictos de horarios
+            String diaActual = horarioDoctorUpdateDto.getDiaSemana() != null ? 
+                    horarioDoctorUpdateDto.getDiaSemana() : String.valueOf(horarioDoctor.getDiaSemana());
+            
+            if (diaActual != null && horarioDoctor.getDoctor() != null) {
+               List<HorarioDoctor> horariosExistentes = horarioDoctorRepository.findAll();
+               boolean hayConflicto = horariosExistentes.stream()
+                       .anyMatch(h -> !h.getIdHorarioDoctor().equals(horarioDoctor.getIdHorarioDoctor()) &&
+                               h.getDoctor() != null && 
+                               h.getDoctor().getIdUsuario().equals(horarioDoctor.getDoctor().getIdUsuario()) &&
+                               h.getDiaSemana() != null &&
+                               h.getDiaSemana().name().equalsIgnoreCase(diaActual) &&
+                               hayConflictoHorario(h, nuevaHoraInicio, nuevaHoraFin));
+               
+               if (hayConflicto) {
+                   throw new RuntimeException("El horario actualizado genera conflicto con otro horario existente");
+               }
             }
             
             // Actualizar campos
@@ -216,14 +198,6 @@ public class HorarioDoctorServiceImpl implements HorarioDoctorService {
             if (horarioDoctorUpdateDto.getHoraFin() != null) {
                 horarioDoctor.setHoraFin(horarioDoctorUpdateDto.getHoraFin());
             }
-            
-            // Recalcular duración
-            /*if (horarioDoctor.getHoraInicio() != null && horarioDoctor.getHoraFin() != null) {
-                long duracionMinutos = calcularDuracionMinutos(
-                        horarioDoctor.getHoraInicio(), 
-                        horarioDoctor.getHoraFin());
-                horarioDoctor.setDuracionMinutos((int) duracionMinutos);
-            }*/
             
             HorarioDoctor updatedHorarioDoctor = horarioDoctorRepository.save(horarioDoctor);
             return mapToResponseDto(updatedHorarioDoctor);

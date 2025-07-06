@@ -1,5 +1,6 @@
 package com.habimed.habimedWebService.consultorio.domain.service;
 
+import com.habimed.habimedWebService.exception.ConflictException;
 import com.habimed.habimedWebService.exception.ResourceNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -94,7 +95,7 @@ public class ConsultorioServiceImpl implements ConsultorioService {
                 .anyMatch(c -> c.getRuc() != null && c.getRuc().equals(consultorioInsertDto.getRuc()));
 
         if (rucExists) {
-            throw new RuntimeException("Ya existe un consultorio con RUC: " + consultorioInsertDto.getRuc());
+            throw new ConflictException("Ya existe un consultorio con RUC: " + consultorioInsertDto.getRuc());
         }
 
         
@@ -110,12 +111,13 @@ public class ConsultorioServiceImpl implements ConsultorioService {
                 );
         
         if (duplicateExists) {
-            throw new RuntimeException("Ya existe un consultorio con el nombre '" + 
+            throw new ConflictException("Ya existe un consultorio con el nombre '" +
                     consultorioInsertDto.getNombre() + "' en la ubicación: " +
                     consultorioInsertDto.getLatitud() + ", "+ consultorioInsertDto.getLongitud());
         }
         
         Consultorio consultorio = modelMapper.map(consultorioInsertDto, Consultorio.class);
+        consultorio.setIdConsultorio(null);
         Consultorio savedConsultorio = consultorioRepository.save(consultorio);
         return modelMapper.map(savedConsultorio, ConsultorioResponseDto.class);
     }

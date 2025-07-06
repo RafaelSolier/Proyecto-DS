@@ -1,5 +1,6 @@
 package com.habimed.habimedWebService.persona.application;
 
+import com.habimed.habimedWebService.exception.ConflictException;
 import com.habimed.habimedWebService.persona.domain.model.Persona;
 import com.habimed.habimedWebService.persona.domain.service.PersonaService;
 
@@ -19,9 +20,9 @@ public class PersonasController {
     private final PersonaService personaService;
 
     @GetMapping
-    public ResponseEntity<List<Persona>> getAllPersonas() {
+    public ResponseEntity<List<PersonaResponseDto>> getAllPersonas() {
         try {
-            List<Persona> personas = personaService.findAll();
+            List<PersonaResponseDto> personas = personaService.findAll();
             return ResponseEntity.ok(personas);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -29,25 +30,25 @@ public class PersonasController {
     }
 
     @PostMapping("/filter")
-    public ResponseEntity<List<Persona>> getPersonasWithFilter(@Valid @RequestBody PersonaFilterDto filterDto) {
+    public ResponseEntity<List<PersonaResponseDto>> getPersonasWithFilter(@Valid @RequestBody PersonaFilterDto filterDto) {
         try {
-            List<Persona> personas = personaService.findAllWithConditions(filterDto);
+            List<PersonaResponseDto> personas = personaService.findAllWithConditions(filterDto);
             return ResponseEntity.ok(personas);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
-    @GetMapping("/{dni}")
-    public ResponseEntity<PersonaResponseDto> getPersonaByDni(@PathVariable Long dni) {
+    @GetMapping("/{id}")
+    public ResponseEntity<Persona> getPersonaByDni(@PathVariable Integer id) {
         try {
-            PersonaResponseDto persona = personaService.getById(dni);
+            Persona persona = personaService.getById(id);
             if (persona != null) {
                 return ResponseEntity.ok(persona);
             } else {
                 return ResponseEntity.notFound().build();
             }
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -58,16 +59,16 @@ public class PersonasController {
             PersonaResponseDto createdPersona = personaService.save(personaInsertDto);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdPersona);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            throw new ConflictException(e.getMessage());
         }
     }
 
-    @PatchMapping("/{dni}")
+    @PatchMapping("/{id}")
     public ResponseEntity<PersonaResponseDto> updatePersona(
-            @PathVariable Long dni,
+            @PathVariable Integer id,
             @Valid @RequestBody PersonaUpdateDto personaUpdateDto) {
         try {
-            PersonaResponseDto updatedPersona = personaService.update(dni, personaUpdateDto);
+            PersonaResponseDto updatedPersona = personaService.update(id, personaUpdateDto);
             if (updatedPersona != null) {
                 return ResponseEntity.ok(updatedPersona);
             } else {
@@ -78,10 +79,10 @@ public class PersonasController {
         }
     }
 
-    @DeleteMapping("/{dni}")
-    public ResponseEntity<Void> deletePersona(@PathVariable Long dni) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletePersona(@PathVariable Integer id) {
         try {
-            Boolean deleted = personaService.delete(dni);
+            Boolean deleted = personaService.delete(id);
             if (deleted) {
                 return ResponseEntity.noContent().build();
             } else {

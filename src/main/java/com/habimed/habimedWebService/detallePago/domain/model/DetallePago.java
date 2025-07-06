@@ -1,8 +1,8 @@
 package com.habimed.habimedWebService.detallePago.domain.model;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.habimed.habimedWebService.cita.domain.model.Cita;
 
 import jakarta.persistence.*;
@@ -21,6 +21,7 @@ public class DetallePago {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idcita", referencedColumnName = "idcita", insertable = false, updatable = false)
+    @JsonBackReference
     private Cita cita;
 
     @Column(name = "monto", nullable = false, precision = 10, scale = 2)
@@ -34,7 +35,5 @@ public class DetallePago {
     @Enumerated(EnumType.STRING)
     private EstadoPagoEnum estadoPago;
 
-    @Column(name = "fecha_pago", nullable = false)
-    private LocalDateTime fechaPago = LocalDateTime.now();
 }
 

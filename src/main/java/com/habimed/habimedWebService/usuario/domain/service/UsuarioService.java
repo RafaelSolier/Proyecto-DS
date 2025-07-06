@@ -6,8 +6,8 @@ import com.habimed.habimedWebService.usuario.domain.model.Usuario;
 import com.habimed.habimedWebService.usuario.dto.*;
 
 public interface UsuarioService {
-    List<Usuario> findAll();
-    List<Usuario> findAllWithConditions(UsuarioFilterDto usuarioFilterDto);
+    List<UsuarioResponseDto> findAll();
+//    List<UsuarioResponseDto> findAllWithConditions(UsuarioFilterDto usuarioFilterDto);
     UsuarioResponseDto getById(Integer id);
     UsuarioResponseDto save(UsuarioInsertDto usuarioInsertDto);
     Boolean delete(Integer id);

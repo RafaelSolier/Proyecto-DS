@@ -87,22 +87,13 @@ public class PermisoHistorialServiceImpl implements PermisoHistorialService {
     public PermisoHistorialResponseDto getById(Integer id) {
         Optional<PermisosHistorial> permiso = permisoHistorialRepository.findById(id);
         if (permiso.isPresent()) {
-            return mapToResponseDto(permiso.get());
+            return modelMapper.map(permiso.get(), PermisoHistorialResponseDto.class);
         }
         throw new RuntimeException("Permiso de historial no encontrado con ID: " + id);
     }
 
     @Override
     public PermisoHistorialResponseDto save(PermisoHistorialnsertDto permisoHistorialInsertDto) {
-        // Validaciones específicas del contexto de permisos de historial
-        if (permisoHistorialInsertDto.getIddoctor() == null) {
-            throw new RuntimeException("El ID del doctor es obligatorio");
-        }
-        
-        if (permisoHistorialInsertDto.getIdpaciente() == null) {
-            throw new RuntimeException("El ID del paciente es obligatorio");
-        }
-        
         // Verificar que el doctor y paciente existen
         Optional<Usuario> doctor = usuarioRepository.findById(permisoHistorialInsertDto.getIddoctor());
         if (!doctor.isPresent()) {
@@ -131,11 +122,11 @@ public class PermisoHistorialServiceImpl implements PermisoHistorialService {
         // Verificar si ya existe un permiso activo entre este doctor y paciente
         List<PermisosHistorial> permisosExistentes = permisoHistorialRepository.findAll();
         boolean permisoActivoExists = permisosExistentes.stream()
-                .anyMatch(p -> p.getDoctor() != null && p.getPaciente() != null &&
-                        p.getDoctor().getIdUsuario().equals(permisoHistorialInsertDto.getIddoctor()) &&
-                        p.getPaciente().getIdUsuario().equals(permisoHistorialInsertDto.getIdpaciente()) &&
-                        p.getEstado() == EstadoPermisosEnum.ACTIVO &&
-                        p.getFechaDenegaPermiso() == null);
+               .anyMatch(p -> p.getDoctor() != null && p.getPaciente() != null &&
+                       p.getDoctor().getIdUsuario().equals(permisoHistorialInsertDto.getIddoctor()) &&
+                       p.getPaciente().getIdUsuario().equals(permisoHistorialInsertDto.getIdpaciente()) &&
+                       p.getEstado() == EstadoPermisosEnum.ACTIVO &&
+                       p.getFechaDenegaPermiso() == null);
         
         if (permisoActivoExists) {
             throw new RuntimeException("Ya existe un permiso activo entre el doctor ID " + 
@@ -161,9 +152,9 @@ public class PermisoHistorialServiceImpl implements PermisoHistorialService {
         if (permiso.getFechaOtorgaPermiso().isAfter(LocalDate.now())) {
             throw new RuntimeException("La fecha de otorgamiento no puede ser futura");
         }
-        
+        permiso.setIdPermisoHistorial(null);
         PermisosHistorial savedPermiso = permisoHistorialRepository.save(permiso);
-        return mapToResponseDto(savedPermiso);
+        return modelMapper.map(savedPermiso, PermisoHistorialResponseDto.class);
     }
 
     @Override
@@ -208,7 +199,7 @@ public class PermisoHistorialServiceImpl implements PermisoHistorialService {
             }
             
             PermisosHistorial updatedPermiso = permisoHistorialRepository.save(permiso);
-            return mapToResponseDto(updatedPermiso);
+            return modelMapper.map(updatedPermiso,PermisoHistorialResponseDto.class);
         }
         
         throw new RuntimeException("Permiso de historial no encontrado con ID: " + id);
@@ -228,17 +219,9 @@ public class PermisoHistorialServiceImpl implements PermisoHistorialService {
                 permisoHistorialRepository.save(permisoEntity);
                 return true;
             }
-            
-            // Solo permitir eliminación física de permisos ya inactivos con más de 30 días
-            if (permisoEntity.getFechaDenegaPermiso() != null && 
-                permisoEntity.getFechaDenegaPermiso().isBefore(LocalDate.now().minusDays(30))) {
-                permisoHistorialRepository.deleteById(id);
-                return true;
-            } else {
-                throw new RuntimeException("Solo se pueden eliminar permisos inactivos con más de 30 días de antigüedad");
-            }
+            permisoHistorialRepository.deleteById(id);
+            return true;
         }
-        
         return false;
     }
 
@@ -269,34 +252,4 @@ public class PermisoHistorialServiceImpl implements PermisoHistorialService {
                 .collect(Collectors.toList());
     }
 
-    // Método helper para mapear a ResponseDto con información adicional
-    private PermisoHistorialResponseDto mapToResponseDto(PermisosHistorial permiso) {
-        PermisoHistorialResponseDto responseDto = modelMapper.map(permiso, PermisoHistorialResponseDto.class);
-        
-        // Agregar información adicional del doctor y paciente
-        if (permiso.getDoctor() != null) {
-            responseDto.setIddoctor(permiso.getDoctor().getIdUsuario());
-            
-            /*if (permiso.getDoctor().getPersona() != null) {
-                String nombreDoctor = permiso.getDoctor().getPersona().getNombres() + 
-                        " " + permiso.getDoctor().getPersona().getApellidos();
-                responseDto.setNombreDoctor(nombreDoctor);
-            }*/
-        }
-        
-        if (permiso.getPaciente() != null) {
-            responseDto.setIdpaciente(permiso.getPaciente().getIdUsuario());
-            
-            /*if (permiso.getPaciente().getPersona() != null) {
-                String nombrePaciente = permiso.getPaciente().getPersona().getNombres() + 
-                        " " + permiso.getPaciente().getPersona().getApellidos();
-                responseDto.setNombrePaciente(nombrePaciente);
-            }*/
-        }
-        
-        // Convertir enum a boolean para compatibilidad
-        responseDto.setEstado(permiso.getEstado() == EstadoPermisosEnum.ACTIVO);
-        
-        return responseDto;
-    }
 }

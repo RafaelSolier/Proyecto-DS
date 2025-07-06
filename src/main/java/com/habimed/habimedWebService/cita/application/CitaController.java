@@ -2,8 +2,11 @@ package com.habimed.habimedWebService.cita.application;
 
 import java.util.List;
 
-import com.habimed.habimedWebService.cita.domain.model.Cita;
 import com.habimed.habimedWebService.cita.dto.*;
+import com.habimed.habimedWebService.exception.BadRequestException;
+import com.habimed.habimedWebService.exception.ConflictException;
+import com.habimed.habimedWebService.exception.ForbiddenException;
+import com.habimed.habimedWebService.exception.ResourceNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,14 +23,27 @@ public class CitaController {
     private final CitaService citaService;
 
     @GetMapping
-    public ResponseEntity<List<Cita>> getAllCitas() {
-        List<Cita> citas = citaService.findAll();
-        return ResponseEntity.ok(citas);
+    public ResponseEntity<List<CitaResponseDto>> getAllCitas() {
+        try {
+            List<CitaResponseDto> citas = citaService.findAll();
+            return ResponseEntity.ok(citas);
+        }catch (Exception e) {
+            if (e instanceof ConflictException) {
+                throw new ConflictException(e.getMessage());
+            } else if (e instanceof ForbiddenException) {
+                throw new ForbiddenException(e.getMessage());
+            } else if (e instanceof ResourceNotFoundException) {
+                throw new ResourceNotFoundException(e.getMessage());
+            } else if (e instanceof BadRequestException) {
+                throw new BadRequestException(e.getMessage());
+            }
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     @PostMapping("/filter")
-    public ResponseEntity<List<Cita>> getAllCitasWithConditions(@RequestBody CitaFilterDto citaFilterDto) {
-        List<Cita> citas = citaService.findAllWithConditions(citaFilterDto);
+    public ResponseEntity<List<CitaResponseDto>> getAllCitasWithConditions(@RequestBody CitaFilterDto citaFilterDto) {
+        List<CitaResponseDto> citas = citaService.findAllWithConditions(citaFilterDto);
         return ResponseEntity.ok(citas);
     }
 
@@ -39,16 +55,43 @@ public class CitaController {
 
     @PostMapping
     public ResponseEntity<CitaResponseDto> createCita(@Valid @RequestBody CitaInsertDto citaInsertDto) {
-        CitaResponseDto citaCreada = citaService.save(citaInsertDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(citaCreada);
+        try{
+            CitaResponseDto citaCreada = citaService.save(citaInsertDto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(citaCreada);
+        }
+        catch (Exception e) {
+            if (e instanceof ConflictException) {
+                throw new ConflictException(e.getMessage());
+            } else if (e instanceof ForbiddenException) {
+                throw new ForbiddenException(e.getMessage());
+            } else if (e instanceof ResourceNotFoundException) {
+                throw new ResourceNotFoundException(e.getMessage());
+            } else if (e instanceof BadRequestException) {
+                throw new BadRequestException(e.getMessage());
+            }
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity<CitaResponseDto> updateCita(
             @PathVariable Integer id,
             @Valid @RequestBody CitaUpdateDto citaUpdateDto) {
-        CitaResponseDto citaActualizada = citaService.update(id, citaUpdateDto);
-        return ResponseEntity.ok(citaActualizada);
+        try {
+            CitaResponseDto citaActualizada = citaService.update(id, citaUpdateDto);
+            return ResponseEntity.ok(citaActualizada);
+        }catch (Exception e) {
+            if (e instanceof ConflictException) {
+                throw new ConflictException(e.getMessage());
+            } else if (e instanceof ForbiddenException) {
+                throw new ForbiddenException(e.getMessage());
+            } else if (e instanceof ResourceNotFoundException) {
+                throw new ResourceNotFoundException(e.getMessage());
+            } else if (e instanceof BadRequestException) {
+                throw new BadRequestException(e.getMessage());
+            }
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}")
