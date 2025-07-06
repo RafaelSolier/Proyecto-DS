@@ -1,3 +1,6 @@
+## Documentación de la API RESTful
+Ingresa a la ruta ```/swagger-ui/index.html#/``` para poder ver la documentación de la API e incluso realizar request desde ahí mismo
+
 ## Pasos para iniciar el proyecto
 
 1. Clona este repositorio:
