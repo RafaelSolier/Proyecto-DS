@@ -18,11 +18,11 @@ public class PermisosHistorial {
     private Integer idPermisoHistorial;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "iddoctor", referencedColumnName = "idusuario", insertable = false, updatable = false)
+    @JoinColumn(name = "iddoctor", referencedColumnName = "idusuario")
     private Usuario doctor;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "idpaciente", referencedColumnName = "idusuario", insertable = false, updatable = false)
+    @JoinColumn(name = "idpaciente", referencedColumnName = "idusuario")
     private Usuario paciente;
 
     @Column(name = "fechaotorgapermiso", nullable = false)

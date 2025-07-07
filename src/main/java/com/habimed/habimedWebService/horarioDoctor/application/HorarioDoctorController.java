@@ -55,8 +55,8 @@ public class HorarioDoctorController {
     @PostMapping
     public ResponseEntity<HorarioDoctorResponseDto> createHorarioDoctor(@Valid @RequestBody HorarioDoctorInsertDto horarioDoctorInsertDto) {
         try {
-            HorarioDoctorResponseDto createdEspecialidad = horarioDoctorService.save(horarioDoctorInsertDto);
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdEspecialidad);
+            HorarioDoctorResponseDto horarioDoctor = horarioDoctorService.save(horarioDoctorInsertDto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(horarioDoctor);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
@@ -67,9 +67,9 @@ public class HorarioDoctorController {
             @PathVariable Integer id,
             @Valid @RequestBody HorarioDoctorUpdateDto especialidadUpdateDto) {
         try {
-            HorarioDoctorResponseDto updatedEspecialidad = horarioDoctorService.update(id, especialidadUpdateDto);
-            if (updatedEspecialidad != null) {
-                return ResponseEntity.ok(updatedEspecialidad);
+            HorarioDoctorResponseDto horarioEspecialidad = horarioDoctorService.update(id, especialidadUpdateDto);
+            if (horarioEspecialidad != null) {
+                return ResponseEntity.ok(horarioEspecialidad);
             } else {
                 return ResponseEntity.notFound().build();
             }

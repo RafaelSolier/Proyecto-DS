@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import com.habimed.habimedWebService.detallePago.domain.model.DetallePago;
 import com.habimed.habimedWebService.detallePago.dto.*;
 import com.habimed.habimedWebService.detallePago.repository.DetallePagoRepository;
+import com.habimed.habimedWebService.exception.ConflictException;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -74,8 +76,15 @@ public class DetallePagoServiceImpl implements DetallePagoService {
     @Override
     public DetallePagoResponseDto save(DetallePagoInsertDto detallePagoInsertDto) {
         DetallePago detallePago = modelMapper.map(detallePagoInsertDto, DetallePago.class);
+        //buscar si existe ya el id de la cita
+        DetallePagoFilterDto filter = new DetallePagoFilterDto();
+        filter.setIdCita(detallePagoInsertDto.getIdCita());
+        List<DetallePago> existe = findAllWithConditions(filter);
+        if(existe.size() <= 0){
+            throw new ConflictException("Ya se tiene registrado un pago para la cita " + detallePagoInsertDto.getIdCita());
+        }
+        detallePago.setIdDetallePago(null);
         DetallePago savedDetallePago = detallePagoRepository.save(detallePago);
-        savedDetallePago.setIdDetallePago(null);
         return modelMapper.map(savedDetallePago, DetallePagoResponseDto.class);
     }
 

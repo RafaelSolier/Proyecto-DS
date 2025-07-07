@@ -1,5 +1,6 @@
 package com.habimed.habimedWebService.receta.application;
 
+import com.habimed.habimedWebService.exception.BadRequestException;
 import com.habimed.habimedWebService.receta.domain.model.Receta;
 import com.habimed.habimedWebService.receta.domain.service.RecetaService;
 import com.habimed.habimedWebService.receta.dto.*;
@@ -58,7 +59,8 @@ public class RecetaController {
             RecetaResponseDto createdReceta = recetaService.save(recetaInsertDto);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdReceta);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            //return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            throw new BadRequestException(e.getMessage());
         }
     }
 

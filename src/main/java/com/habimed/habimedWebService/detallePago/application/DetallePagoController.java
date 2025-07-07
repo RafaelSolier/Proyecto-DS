@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.habimed.habimedWebService.detallePago.domain.service.DetallePagoService;
 import com.habimed.habimedWebService.detallePago.dto.*;
+import com.habimed.habimedWebService.exception.ConflictException;
 
 import java.util.List;
 @RestController
@@ -58,7 +59,7 @@ public class DetallePagoController {
             DetallePagoResponseDto createdDetallePago = detallePagoService.save(detallePagoInsertDto);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdDetallePago);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            throw new ConflictException(e.getMessage());
         }
     }
 
@@ -74,6 +75,7 @@ public class DetallePagoController {
                 return ResponseEntity.notFound().build();
             }
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

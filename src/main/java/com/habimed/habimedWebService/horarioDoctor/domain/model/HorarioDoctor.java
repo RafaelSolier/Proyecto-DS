@@ -19,7 +19,7 @@ public class HorarioDoctor {
     private Integer idHorarioDoctor;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "iddoctor", referencedColumnName = "idusuario", insertable = false, updatable = false)
+    @JoinColumn(name = "iddoctor", referencedColumnName = "idusuario")
     @JsonBackReference
     private Usuario doctor;
 

@@ -1,5 +1,7 @@
 package com.habimed.habimedWebService.horarioDoctor.domain.service;
 
+import com.habimed.habimedWebService.exception.BadRequestException;
+import com.habimed.habimedWebService.exception.ResourceNotFoundException;
 import com.habimed.habimedWebService.horarioDoctor.domain.model.DiaEnum;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -94,20 +96,20 @@ public class HorarioDoctorServiceImpl implements HorarioDoctorService {
         // Verificar que el doctor existe
         Optional<Usuario> doctor = usuarioRepository.findById(horarioDoctorInsertDto.getIdDoctor());
         if (!doctor.isPresent()) {
-            throw new RuntimeException("No existe un doctor con ID: " + horarioDoctorInsertDto.getIdDoctor());
+            throw new ResourceNotFoundException("No existe un doctor con ID: " + horarioDoctorInsertDto.getIdDoctor());
         }
         
         // Validar día de la semana
         if (horarioDoctorInsertDto.getDiaSemana() != null) {
             if (!esDiaSemanaValido(horarioDoctorInsertDto.getDiaSemana())) {
-                throw new RuntimeException("Día de la semana no válido: " + horarioDoctorInsertDto.getDiaSemana());
+                throw new BadRequestException("Día de la semana no válido: " + horarioDoctorInsertDto.getDiaSemana());
             }
         }
         
         // Validar horarios lógicos
         if (horarioDoctorInsertDto.getHoraInicio() != null && horarioDoctorInsertDto.getHoraFin() != null) {
             if (!horarioDoctorInsertDto.getHoraInicio().isBefore(horarioDoctorInsertDto.getHoraFin())) {
-                throw new RuntimeException("La hora de inicio debe ser anterior a la hora de fin");
+                throw new BadRequestException("La hora de inicio debe ser anterior a la hora de fin");
             }
             
             // Validar horarios de trabajo razonables (6:00 AM - 10:00 PM)
@@ -115,7 +117,7 @@ public class HorarioDoctorServiceImpl implements HorarioDoctorService {
             LocalTime finLocalTime = horarioDoctorInsertDto.getHoraFin().toLocalTime();
             
             if (inicioLocalTime.isBefore(LocalTime.of(6, 0)) || finLocalTime.isAfter(LocalTime.of(22, 0))) {
-                throw new RuntimeException("Los horarios deben estar entre 6:00 AM y 10:00 PM");
+                throw new BadRequestException("Los horarios deben estar entre 6:00 AM y 10:00 PM");
             }
         }
         
