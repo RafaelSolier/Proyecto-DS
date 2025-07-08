@@ -18,7 +18,7 @@ public class Resenia {
     private Integer idResenia;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "iddoctor", referencedColumnName = "idusuario", insertable = false, updatable = false)
+    @JoinColumn(name = "iddoctor", referencedColumnName = "idusuario")
     private Usuario doctor;
 
     @Column(name = "calificacion", nullable = false)
