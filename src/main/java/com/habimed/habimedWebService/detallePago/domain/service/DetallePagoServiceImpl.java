@@ -88,7 +88,7 @@ public class DetallePagoServiceImpl implements DetallePagoService {
                 .orElseThrow(()->new ResourceNotFoundException("No existe una cita con ID: "+detallePagoInsertDto.getIdCita()));
         // Verificar que esa cita no tenga otro pago
         if (cita.getDetallePago()!= null) {
-            throw new ConflictException("La cita ya tiene un pago relacionado con ID: "+cita.getDetallePago().getIdDetallePago());
+            throw new ConflictException("Ya se tiene registrado un pago para la cita " + detallePagoInsertDto.getIdCita());
         }
         DetallePago detallePago = modelMapper.map(detallePagoInsertDto, DetallePago.class);
         detallePago.setCita(cita);

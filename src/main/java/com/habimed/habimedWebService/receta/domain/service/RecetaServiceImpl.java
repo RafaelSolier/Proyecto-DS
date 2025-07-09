@@ -38,7 +38,7 @@ public class RecetaServiceImpl implements RecetaService {
         List<Receta> recetas = recetaRepository.findAll();
         
         // Filtrar por campos del FilterDto si no son null
-        if (recetaFilterDto.getIdCita() != null) {
+        if (recetaFilterDto.getIdCita() != null && recetaFilterDto.getIdCita() != 0) {
             recetas = recetas.stream()
                     .filter(r -> r.getCita() != null && 
                             r.getCita().getIdCita().equals(recetaFilterDto.getIdCita()))
@@ -82,11 +82,6 @@ public class RecetaServiceImpl implements RecetaService {
 
     @Override
     public RecetaResponseDto save(RecetaInsertDto recetaInsertDto) {
-        // Validaciones específicas del contexto de Receta
-        if (recetaInsertDto.getIdCita() == null) {
-            throw new RuntimeException("El ID de la cita es obligatorio para crear una receta");
-        }
-        
         // Verificar que la cita existe
         Optional<Cita> cita = citaRepository.findById(recetaInsertDto.getIdCita());
         if (!cita.isPresent()) {
