@@ -1,5 +1,7 @@
 package com.habimed.habimedWebService.receta.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.habimed.habimedWebService.cita.domain.model.Cita;
 import jakarta.persistence.*;
 import lombok.*;
@@ -19,6 +21,8 @@ public class Receta {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idcita", referencedColumnName = "idcita")
+    //@JsonBackReference
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Cita cita;
 
     @Column(name = "descripcion", nullable = false, length = 1000)

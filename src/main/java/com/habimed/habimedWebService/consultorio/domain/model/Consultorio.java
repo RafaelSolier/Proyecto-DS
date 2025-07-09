@@ -1,5 +1,6 @@
 package com.habimed.habimedWebService.consultorio.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.habimed.habimedWebService.consultorioServicioU.domain.model.ConsultorioServicioU;
 import jakarta.persistence.*;

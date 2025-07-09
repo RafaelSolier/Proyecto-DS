@@ -1,5 +1,6 @@
 package com.habimed.habimedWebService.permisoHistorial.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.habimed.habimedWebService.usuario.domain.model.Usuario;
 import jakarta.persistence.*;
 import lombok.*;
@@ -19,10 +20,12 @@ public class PermisosHistorial {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "iddoctor", referencedColumnName = "idusuario")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Usuario doctor;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idpaciente", referencedColumnName = "idusuario")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Usuario paciente;
 
     @Column(name = "fechaotorgapermiso", nullable = false)

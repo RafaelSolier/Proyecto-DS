@@ -1,5 +1,6 @@
 package com.habimed.habimedWebService.especialidad.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.habimed.habimedWebService.servicio.domain.model.Servicio;
 import jakarta.persistence.*;
@@ -25,6 +26,6 @@ public class Especialidad {
     private String descripcion;
 
     @OneToMany(mappedBy = "especialidad", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonManagedReference
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private List<Servicio> servicios;
 }
