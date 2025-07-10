@@ -8,10 +8,10 @@ import com.habimed.habimedWebService.permisoHistorial.domain.model.EstadoPermiso
 
 @Data
 public class PermisoHistorialResponseDto {
-    private Integer idpermisohistorial;
-    private Integer iddoctor;
-    private Integer idpaciente;
-    private LocalDate fechaotorgapermiso;
-    private LocalDate fechadeniegapermiso;
+    private Integer idPermisoHistorial;
+    private Integer idDoctor;
+    private Integer idPaciente;
+    private LocalDate fechaOtorgaPermiso;
+    private LocalDate fechaDeniegaPermiso;
     private EstadoPermisosEnum estado;
 }

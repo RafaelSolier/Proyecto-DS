@@ -106,7 +106,7 @@ public class DetallePagoController {
             throw new BadRequestException(e.getMessage());
         }
         throw new RuntimeException(e.getMessage());
-    }
+        }
     }
 
     @DeleteMapping("/{id}")

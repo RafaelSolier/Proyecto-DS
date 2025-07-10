@@ -3,6 +3,10 @@ package com.habimed.habimedWebService.diagnostico.application;
 import com.habimed.habimedWebService.diagnostico.domain.model.Diagnostico;
 import com.habimed.habimedWebService.diagnostico.dto.*;
 import com.habimed.habimedWebService.diagnostico.dto.DiagnosticoResponseDto;
+import com.habimed.habimedWebService.exception.BadRequestException;
+import com.habimed.habimedWebService.exception.ConflictException;
+import com.habimed.habimedWebService.exception.ForbiddenException;
+import com.habimed.habimedWebService.exception.ResourceNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,12 +25,21 @@ public class DiagnosticoController {
     private final DiagnosticoService diagnosticoService;
 
     @GetMapping
-    public ResponseEntity<List<Diagnostico>> getAllDiagnosticos() {
+    public ResponseEntity<List<DiagnosticoResponseDto>> getAllDiagnosticos() {
         try {
-            List<Diagnostico> diagnosticos = diagnosticoService.findAll();
+            List<DiagnosticoResponseDto> diagnosticos = diagnosticoService.findAll();
             return ResponseEntity.ok(diagnosticos);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            if (e instanceof ConflictException) {
+                throw new ConflictException(e.getMessage());
+            } else if (e instanceof ForbiddenException) {
+                throw new ForbiddenException(e.getMessage());
+            } else if (e instanceof ResourceNotFoundException) {
+                throw new ResourceNotFoundException(e.getMessage());
+            } else if (e instanceof BadRequestException) {
+                throw new BadRequestException(e.getMessage());
+            }
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -50,7 +63,16 @@ public class DiagnosticoController {
                 return ResponseEntity.notFound().build();
             }
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            if (e instanceof ConflictException) {
+                throw new ConflictException(e.getMessage());
+            } else if (e instanceof ForbiddenException) {
+                throw new ForbiddenException(e.getMessage());
+            } else if (e instanceof ResourceNotFoundException) {
+                throw new ResourceNotFoundException(e.getMessage());
+            } else if (e instanceof BadRequestException) {
+                throw new BadRequestException(e.getMessage());
+            }
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -60,7 +82,16 @@ public class DiagnosticoController {
             DiagnosticoResponseDto createdDiagnostico = diagnosticoService.save(diagnosticoInsertDto);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdDiagnostico);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            if (e instanceof ConflictException) {
+                throw new ConflictException(e.getMessage());
+            } else if (e instanceof ForbiddenException) {
+                throw new ForbiddenException(e.getMessage());
+            } else if (e instanceof ResourceNotFoundException) {
+                throw new ResourceNotFoundException(e.getMessage());
+            } else if (e instanceof BadRequestException) {
+                throw new BadRequestException(e.getMessage());
+            }
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -76,7 +107,16 @@ public class DiagnosticoController {
                 return ResponseEntity.notFound().build();
             }
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            if (e instanceof ConflictException) {
+                throw new ConflictException(e.getMessage());
+            } else if (e instanceof ForbiddenException) {
+                throw new ForbiddenException(e.getMessage());
+            } else if (e instanceof ResourceNotFoundException) {
+                throw new ResourceNotFoundException(e.getMessage());
+            } else if (e instanceof BadRequestException) {
+                throw new BadRequestException(e.getMessage());
+            }
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -90,7 +130,16 @@ public class DiagnosticoController {
                 return ResponseEntity.notFound().build();
             }
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            if (e instanceof ConflictException) {
+                throw new ConflictException(e.getMessage());
+            } else if (e instanceof ForbiddenException) {
+                throw new ForbiddenException(e.getMessage());
+            } else if (e instanceof ResourceNotFoundException) {
+                throw new ResourceNotFoundException(e.getMessage());
+            } else if (e instanceof BadRequestException) {
+                throw new BadRequestException(e.getMessage());
+            }
+            throw new RuntimeException(e.getMessage());
         }
     }
 }

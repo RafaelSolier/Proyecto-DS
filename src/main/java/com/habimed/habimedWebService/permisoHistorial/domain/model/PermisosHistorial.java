@@ -32,7 +32,7 @@ public class PermisosHistorial {
     private LocalDate fechaOtorgaPermiso = LocalDate.now();
 
     @Column(name = "fechadeniegapermiso")
-    private LocalDate fechaDenegaPermiso;
+    private LocalDate fechaDeniegaPermiso;
 
     @Column(name = "estado", nullable = false, length = 50)
     @Enumerated(EnumType.STRING)
