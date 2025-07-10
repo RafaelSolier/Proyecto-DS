@@ -38,7 +38,7 @@ public class ConsultorioServicioU {
     private Servicio servicio;
 
     @OneToMany(mappedBy = "consultorioServicioU", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonManagedReference
+    @JsonBackReference
     private List<Cita> citas;
 
 }

@@ -52,12 +52,15 @@ public class Cita {
 
     // Relaciones One-to-Many
     @OneToMany(mappedBy = "cita", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonBackReference
     private List<Diagnostico> diagnosticos;
 
     @OneToMany(mappedBy = "cita", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonBackReference
     private List<Receta> recetas;
 
     @OneToMany(mappedBy = "cita", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonBackReference
     private List<Recomendacion> recomendaciones;
 
     // Relación One-to-One con DetallePago

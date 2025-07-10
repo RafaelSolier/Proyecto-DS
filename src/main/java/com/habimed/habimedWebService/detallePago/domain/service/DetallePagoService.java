@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface DetallePagoService {
     List<DetallePago> findAll();
-    List<DetallePago> findAllWithConditions(DetallePagoFilterDto detallePagoFilterDto);
+    List<DetallePagoResponseDto> findAllWithConditions(DetallePagoFilterDto detallePagoFilterDto);
     DetallePagoResponseDto getById(Integer id);
     DetallePagoResponseDto save(DetallePagoInsertDto detallePagoInsertDto);
     Boolean delete(Integer id);

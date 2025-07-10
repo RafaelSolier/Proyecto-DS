@@ -1,5 +1,6 @@
 package com.habimed.habimedWebService.diagnostico.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.habimed.habimedWebService.cita.domain.model.Cita;
 import jakarta.persistence.*;
 import lombok.*;
@@ -18,7 +19,8 @@ public class Diagnostico {
     private Integer idDiagnostico;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "idcita", referencedColumnName = "idcita", insertable = false, updatable = false)
+    @JoinColumn(name = "idcita", referencedColumnName = "idcita")
+    @JsonManagedReference
     private Cita cita;
 
     @Column(name = "descripcion", nullable = false, length = 1000)

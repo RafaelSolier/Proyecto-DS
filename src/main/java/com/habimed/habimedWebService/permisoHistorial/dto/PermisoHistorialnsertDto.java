@@ -8,13 +8,13 @@ import jakarta.validation.constraints.NotNull;
 
 @Data
 public class PermisoHistorialnsertDto {
-    private Integer idpermisohistorial;
+    //private Integer idpermisohistorial;
     @NotNull(message = "El ID del doctor no puede ser nulo")
-    private Integer iddoctor;
+    private Integer idDoctor;
     @NotNull(message = "El ID del paciente no puede ser nulo")
-    private Integer idpaciente;
+    private Integer idPaciente;
+    //private LocalDate fechaOtorgaPermiso;
     @NotNull(message = "La fecha de otorgamiento del permiso no puede ser nula")
-    private LocalDate fechaotorgapermiso;
-    private LocalDate fechadeniegapermiso;
+    private LocalDate fechaDeniegaPermiso;
     private Boolean estado;
 }

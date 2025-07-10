@@ -1,5 +1,7 @@
 package com.habimed.habimedWebService.diagnostico.domain.service;
 
+import com.habimed.habimedWebService.exception.ConflictException;
+import com.habimed.habimedWebService.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -13,6 +15,7 @@ import com.habimed.habimedWebService.cita.domain.model.Cita;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,8 +26,10 @@ public class DiagnosticoServiceImpl implements DiagnosticoService {
     private final ModelMapper modelMapper;
 
     @Override
-    public List<Diagnostico> findAll() {
-        return diagnosticoRepository.findAll();
+    public List<DiagnosticoResponseDto> findAll() {
+        return diagnosticoRepository.findAll().stream()
+                .map(this::mapToResponseDto)
+                .collect(Collectors.toList());
     }
 
 //    @Override
@@ -83,43 +88,28 @@ public class DiagnosticoServiceImpl implements DiagnosticoService {
 
     @Override
     public DiagnosticoResponseDto save(DiagnosticoInsertDto diagnosticoInsertDto) {
-        // Validaciones específicas del contexto de Diagnóstico
-        if (diagnosticoInsertDto.getIdCita() == null) {
-            throw new RuntimeException("El ID de la cita es obligatorio para crear un diagnóstico");
-        }
-        
+
         // Verificar que la cita existe
-        Optional<Cita> cita = citaRepository.findById(diagnosticoInsertDto.getIdCita());
-        if (!cita.isPresent()) {
-            throw new RuntimeException("No existe una cita con ID: " + diagnosticoInsertDto.getIdCita());
-        }
+        Cita citaEntity = citaRepository.findById(diagnosticoInsertDto.getIdCita())
+                .orElseThrow( () -> new ResourceNotFoundException("No existe una cita con ID: " + diagnosticoInsertDto.getIdCita()));
         
         // Verificar que la cita no sea futura (solo se pueden crear diagnósticos de citas pasadas o actuales)
-        Cita citaEntity = cita.get();
         if (citaEntity.getFechaHoraInicio() != null && 
             citaEntity.getFechaHoraInicio().toLocalDate().isAfter(LocalDate.now())) {
-            throw new RuntimeException("No se puede crear un diagnóstico para una cita futura");
+            throw new ConflictException("No se puede crear un diagnóstico para una cita futura");
         }
         
-//        // Verificar que no exista ya un diagnóstico para esta cita (regla de negocio opcional)
-//        List<Diagnostico> existingDiagnosticos = diagnosticoRepository.findAll();
-//        boolean diagnosticoExists = existingDiagnosticos.stream()
-//                .anyMatch(d -> d.getCita() != null &&
-//                        d.getCita().getIdCita().equals(diagnosticoInsertDto.getIdCita()));
-//
-//        if (diagnosticoExists) {
-//            throw new RuntimeException("Ya existe un diagnóstico para la cita con ID: " +
-//                    diagnosticoInsertDto.getIdCita());
-//        }
-        
+        // Las Citas pueden tener más de un diagnostico de ser necesario
+        // Por ejemplo por evaluaciones de diferentes doctores en una misma cita
+
+        // Cargar los datos de entrada a un objeto nuevo y con la fecha actual
         Diagnostico diagnostico = modelMapper.map(diagnosticoInsertDto, Diagnostico.class);
         diagnostico.setCita(citaEntity);
-        
-        // Establecer fecha actual si no se proporciona
-        if (diagnostico.getFechaDiagnostico() == null) {
-            diagnostico.setFechaDiagnostico(LocalDate.now());
-        }
+        diagnostico.setFechaDiagnostico(LocalDate.now());
+
         diagnostico.setIdDiagnostico(null);
+
+        // Guardar y mapear a respuesta
         Diagnostico savedDiagnostico = diagnosticoRepository.save(diagnostico);
         return mapToResponseDto(savedDiagnostico);
     }

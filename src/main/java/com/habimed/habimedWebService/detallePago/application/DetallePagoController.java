@@ -1,6 +1,10 @@
 package com.habimed.habimedWebService.detallePago.application;
 
 import com.habimed.habimedWebService.detallePago.domain.model.DetallePago;
+import com.habimed.habimedWebService.exception.BadRequestException;
+import com.habimed.habimedWebService.exception.ConflictException;
+import com.habimed.habimedWebService.exception.ForbiddenException;
+import com.habimed.habimedWebService.exception.ResourceNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -29,9 +33,9 @@ public class DetallePagoController {
     }
 
     @PostMapping("/filter")
-    public ResponseEntity<List<DetallePago>> getDetallePagosWithFilter(@Valid @RequestBody DetallePagoFilterDto filterDto) {
+    public ResponseEntity<List<DetallePagoResponseDto>> getDetallePagosWithFilter(@Valid @RequestBody DetallePagoFilterDto filterDto) {
         try {
-            List<DetallePago> detallePagos = detallePagoService.findAllWithConditions(filterDto);
+            List<DetallePagoResponseDto> detallePagos = detallePagoService.findAllWithConditions(filterDto);
             return ResponseEntity.ok(detallePagos);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -47,9 +51,18 @@ public class DetallePagoController {
             } else {
                 return ResponseEntity.notFound().build();
             }
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }catch (Exception e) {
+        if (e instanceof ConflictException) {
+            throw new ConflictException(e.getMessage());
+        } else if (e instanceof ForbiddenException) {
+            throw new ForbiddenException(e.getMessage());
+        } else if (e instanceof ResourceNotFoundException) {
+            throw new ResourceNotFoundException(e.getMessage());
+        } else if (e instanceof BadRequestException) {
+            throw new BadRequestException(e.getMessage());
         }
+        throw new RuntimeException(e.getMessage());
+    }
     }
 
     @PostMapping
@@ -57,8 +70,17 @@ public class DetallePagoController {
         try {
             DetallePagoResponseDto createdDetallePago = detallePagoService.save(detallePagoInsertDto);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdDetallePago);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }catch (Exception e) {
+            if (e instanceof ConflictException) {
+                throw new ConflictException(e.getMessage());
+            } else if (e instanceof ForbiddenException) {
+                throw new ForbiddenException(e.getMessage());
+            } else if (e instanceof ResourceNotFoundException) {
+                throw new ResourceNotFoundException(e.getMessage());
+            } else if (e instanceof BadRequestException) {
+                throw new BadRequestException(e.getMessage());
+            }
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -74,7 +96,16 @@ public class DetallePagoController {
                 return ResponseEntity.notFound().build();
             }
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        if (e instanceof ConflictException) {
+            throw new ConflictException(e.getMessage());
+        } else if (e instanceof ForbiddenException) {
+            throw new ForbiddenException(e.getMessage());
+        } else if (e instanceof ResourceNotFoundException) {
+            throw new ResourceNotFoundException(e.getMessage());
+        } else if (e instanceof BadRequestException) {
+            throw new BadRequestException(e.getMessage());
+        }
+        throw new RuntimeException(e.getMessage());
         }
     }
 

@@ -1,6 +1,7 @@
 package com.habimed.habimedWebService.horarioDoctor.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.habimed.habimedWebService.usuario.domain.model.Usuario;
 import jakarta.persistence.*;
 import lombok.*;
@@ -19,8 +20,8 @@ public class HorarioDoctor {
     private Integer idHorarioDoctor;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "iddoctor", referencedColumnName = "idusuario", insertable = false, updatable = false)
-    @JsonBackReference
+    @JoinColumn(name = "iddoctor", referencedColumnName = "idusuario")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Usuario doctor;
 
     @Column(nullable = false)

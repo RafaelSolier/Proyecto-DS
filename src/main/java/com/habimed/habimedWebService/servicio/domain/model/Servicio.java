@@ -1,6 +1,7 @@
 package com.habimed.habimedWebService.servicio.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.habimed.habimedWebService.consultorioServicioU.domain.model.ConsultorioServicioU;
 import com.habimed.habimedWebService.especialidad.domain.model.Especialidad;
@@ -35,6 +36,7 @@ public class Servicio {
     private String riesgos;
 
     @OneToMany(mappedBy = "servicio", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonManagedReference
+    //@JsonManagedReference
+    @JsonBackReference
     private List<ConsultorioServicioU> consultorioServicioU;
 }

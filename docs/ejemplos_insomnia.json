@@ -1,0 +1,321 @@
+{
+  "consultorios": {
+    "POST /api/consultorios": {
+      "body": {
+        "ruc": "12345678901",
+        "nombre": "Consultorio Central",
+        "latitud": -12.0464,
+        "longitud": -77.0428,
+        "direccion": "Calle Falsa 123",
+        "telefono": "987654321"
+      }
+    },
+    "POST /api/consultorios/filter": {
+      "body": {
+        "nombre": "Consultorio Central",
+        "latitud": -12.0464,
+        "longitud": -77.0428,
+        "ruc": "12345678901"
+      }
+    },
+    "PATCH /api/consultorios/{id}": {
+      "body": {
+        "ruc": "12345678901",
+        "nombre": "Consultorio Central",
+        "longitud": -77.0428,
+        "latitud": -12.0464,
+        "direccion": "Calle Falsa 123",
+        "telefono": "987654321"
+      }
+    }
+  },
+  "personas": {
+    "POST /api/personas": {
+      "body": {
+        "dni": "12345678",
+        "nombres": "Juan",
+        "apellidos": "Pérez",
+        "celular": "987654321",
+        "direccion": "Av. Siempre Viva 123",
+        "fechaNacimiento": "1990-01-01"
+      }
+    },
+    "POST /api/personas/filter": {
+      "body": {
+        "dni": "12345678",
+        "nombres": "Juan",
+        "apellidos": "Pérez",
+        "fechaNacimiento": "1990-01-01"
+      }
+    },
+    "PATCH /api/personas/{id}": {
+      "body": {
+        "nombres": "Juan",
+        "apellidos": "Pérez",
+        "correo": "juan.perez@email.com",
+        "celular": "987654321",
+        "direccion": "Av. Siempre Viva 123",
+        "fechaNacimiento": "1990-01-01"
+      }
+    }
+  },
+  "usuarios": {
+    "POST /api/usuarios": {
+      "body": {
+        "idPersona": 1,
+        "correo": "usuario@email.com",
+        "tipoUsuario": "ADMIN",
+        "contrasenia": "password123",
+        "estado": true
+      }
+    },
+    "POST /api/usuarios/filter": {
+      "body": {
+        "dniPersona": 1,
+        "tipoUsuarioId": 2,
+        "usuario": "usuario1",
+        "estado": true
+      }
+    },
+    "PATCH /api/usuarios/{id}": {
+      "body": {
+        "codigoCMP": "CMP12345",
+        "contrasenia": "nuevaPassword",
+        "estado": false
+      }
+    }
+  },
+  "horarioDoctor": {
+    "POST /api/horario-doctor": {
+      "body": {
+        "idDoctor": 1,
+        "diaSemana": "LUNES",
+        "horaInicio": "2025-07-05T08:00:00",
+        "horaFin": "2025-07-05T12:00:00"
+      }
+    },
+    "POST /api/horario-doctor/filter": {
+      "body": {
+        "idhorariodoctor": 1,
+        "iddoctor": 1,
+        "diaSemana": "LUNES",
+        "horaInicio": "08:00:00",
+        "horaFin": "12:00:00"
+      }
+    },
+    "PATCH /api/horario-doctor/{id}": {
+      "body": {
+        "diaSemana": "LUNES",
+        "horaInicio": "2025-07-05T08:00:00",
+        "horaFin": "2025-07-05T12:00:00"
+      }
+    }
+  },
+  "servicios": {
+    "POST /api/servicios": {
+      "body": {
+        "idEspecialidad": 1,
+        "nombre": "Consulta General",
+        "descripcion": "Atención médica general",
+        "riesgos": "Ninguno"
+      }
+    },
+    "POST /api/servicios/filter": {
+      "body": {
+        "idEspecialidad": 1,
+        "nombre": "Consulta General"
+      }
+    },
+    "PATCH /api/servicios/{id}": {
+      "body": {
+        "nombre": "Consulta General Actualizada",
+        "descripcion": "Descripción actualizada",
+        "riesgos": "Ninguno"
+      }
+    }
+  },
+  "resenias": {
+    "POST /api/resenias": {
+      "body": {
+        "idDoctor": 1,
+        "calificacion": 4.5,
+        "comentario": "Excelente atención"
+      }
+    },
+    "POST /api/resenias/filter": {
+      "body": {
+        "idDoctor": 1,
+        "calificacionMinima": 3.0,
+        "calificacionMaxima": 5.0,
+        "fechaInicio": "2025-07-01",
+        "fechaFin": "2025-07-05"
+      }
+    },
+    "PATCH /api/resenias/{id}": {
+      "body": {
+        "calificacion": 4.0,
+        "comentario": "Muy buena atención"
+      }
+    }
+  },
+  "permisoHistorial": {
+    "POST /api/permiso-historial": {
+      "body": {
+        "idpermisohistorial": 1,
+        "iddoctor": 2,
+        "idpaciente": 3,
+        "fechaotorgapermiso": "2025-07-05",
+        "fechadeniegapermiso": "2025-07-10",
+        "estado": true
+      }
+    },
+    "POST /api/permiso-historial/filter": {
+      "body": {
+        "idpermisohistorial": 1,
+        "iddoctor": 2,
+        "idpaciente": 3,
+        "fechaotorgapermiso": "2025-07-05",
+        "fechadeniegapermiso": "2025-07-10",
+        "estado": true
+      }
+    },
+    "PATCH /api/permiso-historial/{id}": {
+      "body": {
+        "iddoctor": 2,
+        "idpaciente": 3,
+        "fechaotorgapermiso": "2025-07-05",
+        "fechadeniegapermiso": "2025-07-10",
+        "estado": false
+      }
+    }
+  },
+  "recetas": {
+    "POST /api/recetas": {
+      "body": {
+        "idCita": 1,
+        "descripcion": "Tomar 1 tableta cada 8 horas"
+      }
+    },
+    "POST /api/recetas/filter": {
+      "body": {
+        "idCita": 1,
+        "fechaRecetaInicio": "2025-07-01",
+        "fechaRecetaFin": "2025-07-05",
+        "descripcionContiene": "tableta"
+      }
+    },
+    "PATCH /api/recetas/{id}": {
+      "body": {
+        "descripcion": "Tomar 1 tableta cada 12 horas"
+      }
+    }
+  },
+  "detallePago": {
+    "POST /api/detalle-pago": {
+      "body": {
+        "monto": 100.50,
+        "metodoPago": "EFECTIVO",
+        "estadoPago": "PAGADO",
+        "idCita": 1
+      }
+    },
+    "POST /api/detalle-pago/filter": {
+      "body": {
+        "idDetallePago": 1,
+        "idCita": 1,
+        "monto": 100.50,
+        "metodoPago": "EFECTIVO",
+        "estadoPago": "PAGADO"
+      }
+    },
+    "PATCH /api/detalle-pago/{id}": {
+      "body": {
+        "monto": 120.00,
+        "metodoPago": "TARJETA",
+        "estadoPago": "PENDIENTE"
+      }
+    }
+  },
+  "citas": {
+    "POST /api/citas": {
+      "body": {
+        "idPaciente": 1,
+        "idConsultorioServicioU": 2,
+        "motivo": "Consulta de control",
+        "fechaHoraInicio": "2025-07-05T09:00:00",
+        "fechaHoraFin": "2025-07-05T09:30:00",
+        "estado": "PROGRAMADA",
+        "descripcion": "Paciente con síntomas leves"
+      }
+    },
+    "POST /api/citas/filter": {
+      "body": {
+        "idCita": 1,
+        "idConsultorioServicioU": 2,
+        "idPersona": 1,
+        "fechaHoraInicio": "2025-07-05T09:00:00",
+        "fechaHoraFin": "2025-07-05T09:30:00",
+        "estado": "PROGRAMADA"
+      }
+    },
+    "PATCH /api/citas/{id}": {
+      "body": {
+        "motivo": "Consulta de seguimiento",
+        "fechaHoraInicio": "2025-07-06T10:00:00",
+        "fechaHoraFin": "2025-07-06T10:30:00",
+        "estado": "REALIZADA"
+      }
+    }
+  },
+  "especialidades": {
+    "POST /api/especialidades": {
+      "body": {
+        "nombre": "Cardiología",
+        "descripcion": "Especialidad médica del corazón"
+      }
+    },
+    "POST /api/especialidades/filter": {
+      "body": {
+        "idEspecialidad": 1,
+        "nombre": "Cardiología",
+        "descripcionContiene": "corazón"
+      }
+    },
+    "PATCH /api/especialidades/{id}": {
+      "body": {
+        "nombre": "Cardiología Actualizada",
+        "descripcion": "Descripción actualizada"
+      }
+    }
+  },
+  "recomendaciones": {
+    "POST /api/recomendaciones": {
+      "body": {
+        "idCita": 1,
+        "descripcion": "Reposo absoluto por 3 días"
+      }
+    },
+    "POST /api/recomendaciones/filter": {
+      "body": {
+        "idCita": 1,
+        "fechaRecomendacionInicio": "2025-07-01",
+        "fechaRecomendacionFin": "2025-07-05",
+        "descripcionContiene": "reposo"
+      }
+    },
+    "PATCH /api/recomendaciones/{id}": {
+      "body": {
+        "descripcion": "Reposo parcial por 2 días"
+      }
+    }
+  },
+  "consultorioServicioU": {
+    "POST /api/consultorio-servicio-u": {
+      "body": {
+        "idUsuario": 1,
+        "idConsultorio": 2,
+        "idServicio": 3
+      }
+    }
+  }
+}

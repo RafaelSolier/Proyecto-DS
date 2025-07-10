@@ -20,7 +20,7 @@ public class DetallePago {
     private Integer idDetallePago;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "idcita", referencedColumnName = "idcita", insertable = false, updatable = false)
+    @JoinColumn(name = "idcita", referencedColumnName = "idcita")
     @JsonBackReference
     private Cita cita;
 

@@ -1,5 +1,9 @@
 package com.habimed.habimedWebService.detallePago.domain.service;
 
+import com.habimed.habimedWebService.cita.domain.model.Cita;
+import com.habimed.habimedWebService.cita.repository.CitaRepository;
+import com.habimed.habimedWebService.exception.ConflictException;
+import com.habimed.habimedWebService.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 import com.habimed.habimedWebService.detallePago.domain.model.DetallePago;
@@ -18,6 +22,7 @@ public class DetallePagoServiceImpl implements DetallePagoService {
 
     private final DetallePagoRepository detallePagoRepository;
     private final ModelMapper modelMapper;
+    private final CitaRepository citaRepository;
 
     @Override
     public List<DetallePago> findAll() {
@@ -28,7 +33,7 @@ public class DetallePagoServiceImpl implements DetallePagoService {
     }
 
     @Override
-    public List<DetallePago> findAllWithConditions(DetallePagoFilterDto detallePagoFilterDto) {
+    public List<DetallePagoResponseDto> findAllWithConditions(DetallePagoFilterDto detallePagoFilterDto) {
         // IMPLEMENTACIÓN TEMPORAL (reemplazar con una de las opciones anteriores):
         List<DetallePago> detallesPago = detallePagoRepository.findAll();
         
@@ -57,8 +62,13 @@ public class DetallePagoServiceImpl implements DetallePagoService {
                     .collect(Collectors.toList());
         }
 
+        if (detallePagoFilterDto.getIdCita() != null) {
+            detallesPago = detallesPago.stream()
+                    .filter(dp -> dp.getCita().getIdCita().equals(detallePagoFilterDto.getIdCita())).collect(Collectors.toList());
+        }
+
         return detallesPago.stream()
-                .map(detallePago -> modelMapper.map(detallePago, DetallePago.class))
+                .map(detallePago -> modelMapper.map(detallePago, DetallePagoResponseDto.class))
                 .collect(Collectors.toList());
     }
 
@@ -68,15 +78,25 @@ public class DetallePagoServiceImpl implements DetallePagoService {
         if (detallePago.isPresent()) {
             return modelMapper.map(detallePago.get(), DetallePagoResponseDto.class);
         }
-        throw new RuntimeException("DetallePago no encontrado con ID: " + id);
+        throw new ResourceNotFoundException("DetallePago no encontrado con ID: " + id);
     }
 
     @Override
     public DetallePagoResponseDto save(DetallePagoInsertDto detallePagoInsertDto) {
+        // Verificar si la Cita existe
+        Cita cita = citaRepository.findById(detallePagoInsertDto.getIdCita())
+                .orElseThrow(()->new ResourceNotFoundException("No existe una cita con ID: "+detallePagoInsertDto.getIdCita()));
+        // Verificar que esa cita no tenga otro pago
+        if (cita.getDetallePago()!= null) {
+            throw new ConflictException("Ya se tiene registrado un pago para la cita " + detallePagoInsertDto.getIdCita());
+        }
         DetallePago detallePago = modelMapper.map(detallePagoInsertDto, DetallePago.class);
+        detallePago.setCita(cita);
+        detallePago.setIdDetallePago(null);
         DetallePago savedDetallePago = detallePagoRepository.save(detallePago);
-        savedDetallePago.setIdDetallePago(null);
-        return modelMapper.map(savedDetallePago, DetallePagoResponseDto.class);
+        DetallePagoResponseDto dto = modelMapper.map(detallePagoInsertDto, DetallePagoResponseDto.class);
+        dto.setIdDetallePago(savedDetallePago.getIdDetallePago());
+        return dto;
     }
 
     @Override
@@ -101,7 +121,7 @@ public class DetallePagoServiceImpl implements DetallePagoService {
             return modelMapper.map(updatedDetallePago, DetallePagoResponseDto.class);
         }
         
-        throw new RuntimeException("DetallePago no encontrado con ID: " + id);
+        throw new ResourceNotFoundException("DetallePago no encontrado con ID: " + id);
     }
 
     @Override

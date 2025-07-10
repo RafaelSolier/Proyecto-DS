@@ -20,8 +20,8 @@ public class DetallePagoInsertDto {
     @NotNull(message = "El método de pago es obligatorio")
     private MetodoPagoEnum metodoPago;
 
-    @NotNull(message = "El estado de pago es obligatorio")
-    private EstadoPagoEnum estadoPago;
+    //@NotNull(message = "El estado de pago es obligatorio")
+    private EstadoPagoEnum estadoPago = EstadoPagoEnum.PENDIENTE;
 
     @NotNull(message = "La cita es obligatoria")
     private Integer idCita;

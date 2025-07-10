@@ -1,5 +1,7 @@
 package com.habimed.habimedWebService.resenia.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.habimed.habimedWebService.usuario.domain.model.Usuario;
 import jakarta.persistence.*;
 import lombok.*;
@@ -18,7 +20,9 @@ public class Resenia {
     private Integer idResenia;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "iddoctor", referencedColumnName = "idusuario", insertable = false, updatable = false)
+    @JoinColumn(name = "iddoctor", referencedColumnName = "idusuario")
+    //@JsonBackReference
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Usuario doctor;
 
     @Column(name = "calificacion", nullable = false)
