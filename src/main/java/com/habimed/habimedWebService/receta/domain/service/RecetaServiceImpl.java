@@ -141,15 +141,15 @@ public class RecetaServiceImpl implements RecetaService {
         }
         
         // Validar que la fecha de la receta no sea anterior a la fecha de la cita
-        if (citaEntity.getFechaHoraInicio() != null && 
-            receta.getFechaReceta().isBefore(citaEntity.getFechaHoraInicio().toLocalDate())) {
-            throw new RuntimeException("La fecha de la receta no puede ser anterior a la fecha de la cita");
-        }
+        //if (citaEntity.getFechaHoraInicio() != null && 
+        //    receta.getFechaReceta().isBefore(citaEntity.getFechaHoraInicio().toLocalDate())) {
+        //    throw new RuntimeException("La fecha de la receta no puede ser anterior a la fecha de la cita");
+        //}
         
         // Validar que la fecha de la receta no sea futura (más de 1 día)
-        if (receta.getFechaReceta().isAfter(LocalDate.now().plusDays(1))) {
-            throw new RuntimeException("La fecha de la receta no puede ser más de 1 día en el futuro");
-        }
+        //if (receta.getFechaReceta().isAfter(LocalDate.now().plusDays(1))) {
+        //    throw new RuntimeException("La fecha de la receta no puede ser más de 1 día en el futuro");
+        //}
         
         // Normalizar y limpiar la descripción
         receta.setDescripcion(normalizarDescripcion(receta.getDescripcion()));

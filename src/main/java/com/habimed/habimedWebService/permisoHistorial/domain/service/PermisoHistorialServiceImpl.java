@@ -1,5 +1,9 @@
 package com.habimed.habimedWebService.permisoHistorial.domain.service;
 
+import com.habimed.habimedWebService.consultorio.dto.ConsultorioResponseDto;
+import com.habimed.habimedWebService.exception.BadRequestException;
+import com.habimed.habimedWebService.exception.ConflictException;
+import com.habimed.habimedWebService.exception.ResourceNotFoundException;
 import com.habimed.habimedWebService.permisoHistorial.domain.model.EstadoPermisosEnum;
 import com.habimed.habimedWebService.permisoHistorial.dto.PermisoHistoriaUpdateDto;
 import com.habimed.habimedWebService.permisoHistorial.dto.PermisoHistorialFilterDto;
@@ -29,7 +33,10 @@ public class PermisoHistorialServiceImpl implements PermisoHistorialService {
 
     @Override
     public List<PermisosHistorial> findAll() {
-        return permisoHistorialRepository.findAll();
+        List<PermisosHistorial> lista = permisoHistorialRepository.findAll();
+        return lista.stream()
+                .map(permiso -> modelMapper.map(permiso, PermisosHistorial.class))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -85,11 +92,25 @@ public class PermisoHistorialServiceImpl implements PermisoHistorialService {
 
     @Override
     public PermisoHistorialResponseDto getById(Integer id) {
-        Optional<PermisosHistorial> permiso = permisoHistorialRepository.findById(id);
-        if (permiso.isPresent()) {
-            return modelMapper.map(permiso.get(), PermisoHistorialResponseDto.class);
+        Optional<PermisosHistorial> permisoOpt = permisoHistorialRepository.findById(id);
+
+        if (permisoOpt.isPresent()) {
+            PermisosHistorial permiso = permisoOpt.get();
+
+            // Mapea campos básicos
+            PermisoHistorialResponseDto dto = modelMapper.map(permiso, PermisoHistorialResponseDto.class);
+
+            // Seteo manual de IDs
+            if (permiso.getDoctor() != null) {
+                dto.setIddoctor(permiso.getDoctor().getIdUsuario());
+            }
+            if (permiso.getPaciente() != null) {
+                dto.setIdpaciente(permiso.getPaciente().getIdUsuario());
+            }
+
+            return dto;
         }
-        throw new RuntimeException("Permiso de historial no encontrado con ID: " + id);
+        throw new ResourceNotFoundException("Permiso no encontrado");
     }
 
     @Override
@@ -97,26 +118,26 @@ public class PermisoHistorialServiceImpl implements PermisoHistorialService {
         // Verificar que el doctor y paciente existen
         Optional<Usuario> doctor = usuarioRepository.findById(permisoHistorialInsertDto.getIddoctor());
         if (!doctor.isPresent()) {
-            throw new RuntimeException("No existe un doctor con ID: " + permisoHistorialInsertDto.getIddoctor());
+            throw new ResourceNotFoundException("No existe un doctor con ID: " + permisoHistorialInsertDto.getIddoctor());
         }
         
         Optional<Usuario> paciente = usuarioRepository.findById(permisoHistorialInsertDto.getIdpaciente());
         if (!paciente.isPresent()) {
-            throw new RuntimeException("No existe un paciente con ID: " + permisoHistorialInsertDto.getIdpaciente());
+            throw new ResourceNotFoundException("No existe un paciente con ID: " + permisoHistorialInsertDto.getIdpaciente());
         }
         
         // Verificar que el doctor sea realmente un doctor y el paciente sea realmente un paciente
         if (doctor.get().getTipoUsuario() != TipoUsuarioEnum.DOCTOR) {
-            throw new RuntimeException("El usuario con ID " + permisoHistorialInsertDto.getIddoctor() + " no es un doctor");
+            throw new BadRequestException("El usuario con ID " + permisoHistorialInsertDto.getIddoctor() + " no es un doctor");
         }
         
         if (paciente.get().getTipoUsuario() != TipoUsuarioEnum.PACIENTE) {
-            throw new RuntimeException("El usuario con ID " + permisoHistorialInsertDto.getIdpaciente() + " no es un paciente");
+            throw new BadRequestException("El usuario con ID " + permisoHistorialInsertDto.getIdpaciente() + " no es un paciente");
         }
         
         // Verificar que un paciente no se otorgue permisos a sí mismo
         if (permisoHistorialInsertDto.getIddoctor().equals(permisoHistorialInsertDto.getIdpaciente())) {
-            throw new RuntimeException("Un usuario no puede otorgarse permisos de historial a sí mismo");
+            throw new ConflictException("Un usuario no puede otorgarse permisos de historial a sí mismo");
         }
         
         // Verificar si ya existe un permiso activo entre este doctor y paciente
@@ -129,7 +150,7 @@ public class PermisoHistorialServiceImpl implements PermisoHistorialService {
                        p.getFechaDenegaPermiso() == null);
         
         if (permisoActivoExists) {
-            throw new RuntimeException("Ya existe un permiso activo entre el doctor ID " + 
+            throw new ConflictException("Ya existe un permiso activo entre el doctor ID " + 
                     permisoHistorialInsertDto.getIddoctor() + " y el paciente ID " + 
                     permisoHistorialInsertDto.getIdpaciente());
         }
@@ -149,9 +170,15 @@ public class PermisoHistorialServiceImpl implements PermisoHistorialService {
         }
         
         // Validar que la fecha de otorgamiento no sea futura
-        if (permiso.getFechaOtorgaPermiso().isAfter(LocalDate.now())) {
-            throw new RuntimeException("La fecha de otorgamiento no puede ser futura");
+        if (permiso.getFechaOtorgaPermiso().isBefore(LocalDate.now())) {
+            throw new BadRequestException("La fecha de otorgamiento no puede ser futura");
         }
+
+        // Validar que la fecha de revocación del permiso no sea menor a la fecha de otorgamiento del permiso
+        //if (permiso.getFechaOtorgaPermiso() != null && permiso.getFechaDenegaPermiso().isBefore(permiso.getFechaOtorgaPermiso())) {
+        //    throw new BadRequestException("La fecha de cuando se deberá revocar el permiso debe ser mayor a la fecha de otorgamiento del permiso");
+        //}
+
         permiso.setIdPermisoHistorial(null);
         PermisosHistorial savedPermiso = permisoHistorialRepository.save(permiso);
         return modelMapper.map(savedPermiso, PermisoHistorialResponseDto.class);
@@ -166,7 +193,7 @@ public class PermisoHistorialServiceImpl implements PermisoHistorialService {
             
             // Validar que el permiso no esté ya denegado
             if (permiso.getEstado() == EstadoPermisosEnum.INACTIVO && permiso.getFechaDenegaPermiso() != null) {
-                throw new RuntimeException("No se puede modificar un permiso que ya ha sido denegado");
+                throw new BadRequestException("No se puede modificar un permiso que ya ha sido denegado");
             }
             
             // Solo se puede actualizar el estado para denegar el permiso
@@ -199,10 +226,13 @@ public class PermisoHistorialServiceImpl implements PermisoHistorialService {
             }
             
             PermisosHistorial updatedPermiso = permisoHistorialRepository.save(permiso);
-            return modelMapper.map(updatedPermiso,PermisoHistorialResponseDto.class);
+            PermisoHistorialResponseDto responseDto = modelMapper.map(updatedPermiso, PermisoHistorialResponseDto.class);
+            responseDto.setIddoctor(permisoHistoriaUpdateDto.getIddoctor());
+            responseDto.setIdpaciente(permisoHistoriaUpdateDto.getIdpaciente());
+            return responseDto;
         }
         
-        throw new RuntimeException("Permiso de historial no encontrado con ID: " + id);
+        throw new ResourceNotFoundException("Permiso de historial no encontrado con ID: " + id);
     }
 
     @Override

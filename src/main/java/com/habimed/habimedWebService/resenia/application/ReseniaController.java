@@ -1,5 +1,6 @@
 package com.habimed.habimedWebService.resenia.application;
 
+import com.habimed.habimedWebService.exception.BadRequestException;
 import com.habimed.habimedWebService.resenia.domain.model.Resenia;
 import com.habimed.habimedWebService.resenia.domain.service.ReseniaService;
 import com.habimed.habimedWebService.resenia.dto.*;
@@ -34,7 +35,8 @@ public class ReseniaController {
             List<Resenia> resenias = reseniaService.findAllWithConditions(filterDto);
             return ResponseEntity.ok(resenias);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            e.printStackTrace();
+            throw new BadRequestException(e.getMessage());
         }
     }
 

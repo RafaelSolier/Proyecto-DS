@@ -1,6 +1,8 @@
 package com.habimed.habimedWebService.resenia.domain.service;
 
 import com.habimed.habimedWebService.cita.repository.CitaRepository;
+import com.habimed.habimedWebService.exception.BadRequestException;
+import com.habimed.habimedWebService.exception.ResourceNotFoundException;
 import com.habimed.habimedWebService.resenia.domain.model.Resenia;
 import com.habimed.habimedWebService.resenia.dto.ReseniaFilterDto;
 import com.habimed.habimedWebService.resenia.dto.ReseniaInsertDto;
@@ -93,40 +95,40 @@ public class ReseniaServiceImpl implements ReseniaService {
     public ReseniaResponseDto save(ReseniaInsertDto reseniaInsertDto) {
         // Validaciones específicas del contexto de Reseña
         if (reseniaInsertDto.getIdDoctor() == null) {
-            throw new RuntimeException("El ID del doctor es obligatorio para crear una reseña");
+            throw new BadRequestException("El ID del doctor es obligatorio para crear una reseña");
         }
         
         // Verificar que el doctor existe
         Optional<Usuario> doctor = usuarioRepository.findById(reseniaInsertDto.getIdDoctor());
         if (!doctor.isPresent()) {
-            throw new RuntimeException("No existe un doctor con ID: " + reseniaInsertDto.getIdDoctor());
+            throw new ResourceNotFoundException("No existe un doctor con ID: " + reseniaInsertDto.getIdDoctor());
         }
         
         Usuario doctorEntity = doctor.get();
         
         // Verificar que es realmente un doctor
         if (doctorEntity.getTipoUsuario() != TipoUsuarioEnum.DOCTOR) {
-            throw new RuntimeException("Solo se pueden crear reseñas para usuarios de tipo DOCTOR");
+            throw new BadRequestException("Solo se pueden crear reseñas para usuarios de tipo DOCTOR");
         }
         
         // Verificar que el doctor esté activo
         if (doctorEntity.getEstado() == null || !doctorEntity.getEstado()) {
-            throw new RuntimeException("No se puede crear una reseña para un doctor inactivo");
+            throw new BadRequestException("No se puede crear una reseña para un doctor inactivo");
         }
         
         // Validar calificación
         if (reseniaInsertDto.getCalificacion() == null) {
-            throw new RuntimeException("La calificación es obligatoria");
+            throw new BadRequestException("La calificación es obligatoria");
         }
         
         if (!validarCalificacion(reseniaInsertDto.getCalificacion())) {
-            throw new RuntimeException("La calificación debe estar entre 0.0 y 5.0 con máximo un decimal");
+            throw new BadRequestException("La calificación debe estar entre 0.0 y 5.0 con máximo un decimal");
         }
         
         // Validar comentario si se proporciona
         if (reseniaInsertDto.getComentario() != null && !reseniaInsertDto.getComentario().trim().isEmpty()) {
             if (!validarComentario(reseniaInsertDto.getComentario())) {
-                throw new RuntimeException("El comentario contiene contenido inapropiado o no válido");
+                throw new BadRequestException("El comentario contiene contenido inapropiado o no válido");
             }
             
             if (reseniaInsertDto.getComentario().trim().length() < 5) {
@@ -165,7 +167,7 @@ public class ReseniaServiceImpl implements ReseniaService {
         
         // Validar que la fecha no sea futura
         if (resenia.getFechaResenia().isAfter(LocalDate.now())) {
-            throw new RuntimeException("La fecha de la reseña no puede ser futura");
+            throw new BadRequestException("La fecha de la reseña no puede ser futura");
         }
         
         // Normalizar comentario si existe
@@ -281,17 +283,18 @@ public class ReseniaServiceImpl implements ReseniaService {
     // Métodos helper específicos para el contexto de reseñas
     private boolean validarCalificacion(Double calificacion) {
         if (calificacion == null) return false;
-        
-        // Verificar rango (0.0 a 5.0)
-        Double min = 0.0;
-        Double max = 5.0;
-        
-        if (calificacion.compareTo(min) < 0 || calificacion.compareTo(max) > 0) {
+
+        // Verificar que esté en el rango de 0.0 a 5.0
+        if (calificacion < 0.0 || calificacion > 5.0)
             return false;
-        }
-        
-        // Verificar que tenga máximo un decimal
-        return calificacion <= 1;
+
+        // Verificar que tenga como máximo un decimal
+        String calificacionStr = calificacion.toString();
+        int indexDecimal = calificacionStr.indexOf('.');
+        if (indexDecimal != -1 && calificacionStr.length() - indexDecimal - 1 > 1)
+            return false;
+
+        return true;
     }
     
     private boolean validarComentario(String comentario) {

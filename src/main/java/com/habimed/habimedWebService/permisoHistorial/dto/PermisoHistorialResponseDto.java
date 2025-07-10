@@ -4,6 +4,8 @@ import lombok.Data;
 
 import java.time.LocalDate;
 
+import com.habimed.habimedWebService.permisoHistorial.domain.model.EstadoPermisosEnum;
+
 @Data
 public class PermisoHistorialResponseDto {
     private Integer idpermisohistorial;
@@ -11,5 +13,5 @@ public class PermisoHistorialResponseDto {
     private Integer idpaciente;
     private LocalDate fechaotorgapermiso;
     private LocalDate fechadeniegapermiso;
-    private Boolean estado;
+    private EstadoPermisosEnum estado;
 }
