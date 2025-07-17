@@ -2,6 +2,9 @@ package com.habimed.habimedWebService.auth;
 
 import com.habimed.habimedWebService.auth.dto.LoginRequest;
 import com.habimed.habimedWebService.auth.dto.LoginResponse;
+import com.habimed.habimedWebService.auth.dto.RegisterRequest;
+import com.habimed.habimedWebService.exception.ConflictException;
+import com.habimed.habimedWebService.exception.ResourceNotFoundException;
 import com.habimed.habimedWebService.usuario.domain.service.UsuarioService;
 import com.habimed.habimedWebService.usuario.dto.UsuarioResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -24,10 +27,7 @@ public class AuthController {
     public ResponseEntity<UsuarioResponseDto> login(@RequestBody LoginRequest loginRequest) {
         try {
             // 2. Autenticación manual (sin Spring Security)
-            UsuarioResponseDto usuarioAutenticado = usuarioService.validarCredenciales(
-                    loginRequest.getUsuario(),
-                    loginRequest.getContrasenia()
-            );
+            UsuarioResponseDto usuarioAutenticado = usuarioService.validarCredenciales(loginRequest);
 
             if (usuarioAutenticado == null) {
                 throw new BadRequestException("Credenciales inválidas");
@@ -39,6 +39,20 @@ public class AuthController {
 
         } catch (Exception e) {
             throw new RuntimeException("Error en el servidor: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<UsuarioResponseDto> register(@RequestBody RegisterRequest registerRequest) {
+        try{
+            return ResponseEntity.status(HttpStatus.CREATED).body(usuarioService.registrarUsuario(registerRequest));
+        } catch (Exception e) {
+            if (e instanceof ConflictException) {
+                throw new ConflictException(e.getMessage());
+            } else if (e instanceof ResourceNotFoundException) {
+                throw new ResourceNotFoundException(e.getMessage());
+            }
+            throw new RuntimeException(e.getMessage());
         }
     }
 }
