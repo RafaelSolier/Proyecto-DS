@@ -61,10 +61,10 @@ public class PersonaServiceImpl implements PersonaService {
     }
 
     @Override
-    public Persona getById(Integer idPersona) {
+    public PersonaResponseDto getById(Integer idPersona) {
         Optional<Persona> persona = personaRepository.findById(idPersona);
         if (persona.isPresent()) {
-            return persona.get();
+            return modelMapper.map(persona.get(), PersonaResponseDto.class);
         }
         throw new RuntimeException("Persona no encontrada con ID: " + idPersona);
     }

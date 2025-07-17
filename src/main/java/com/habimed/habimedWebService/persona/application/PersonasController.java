@@ -40,9 +40,9 @@ public class PersonasController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Persona> getPersonaByDni(@PathVariable Integer id) {
+    public ResponseEntity<PersonaResponseDto> getPersonaByDni(@PathVariable Integer id) {
         try {
-            Persona persona = personaService.getById(id);
+            PersonaResponseDto persona = personaService.getById(id);
             if (persona != null) {
                 return ResponseEntity.ok(persona);
             } else {

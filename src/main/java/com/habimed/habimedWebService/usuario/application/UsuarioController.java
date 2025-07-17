@@ -30,15 +30,15 @@ public class UsuarioController {
         }
     }
 
-//    @PostMapping("/filter")
-//    public ResponseEntity<List<Usuario>> getUsuariosWithFilter(@Valid @RequestBody UsuarioFilterDto filterDto) {
-//        try {
-//            List<Usuario> usuarios = usuarioService.findAllWithConditions(filterDto);
-//            return ResponseEntity.ok(usuarios);
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-//        }
-//    }
+    @PostMapping("/filter")
+    public ResponseEntity<List<UsuarioResponseDto>> getUsuariosWithFilter(@Valid @RequestBody UsuarioFilterDto filterDto) {
+        try {
+            List<UsuarioResponseDto> usuarios = usuarioService.findAllWithConditions(filterDto);
+            return ResponseEntity.ok(usuarios);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<UsuarioResponseDto> getUsuarioById(@PathVariable Integer id) {
@@ -98,4 +98,6 @@ public class UsuarioController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+
 }
