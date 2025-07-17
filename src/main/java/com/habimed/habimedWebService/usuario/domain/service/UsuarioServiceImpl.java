@@ -6,6 +6,7 @@ import com.habimed.habimedWebService.persona.domain.model.Persona;
 import com.habimed.habimedWebService.persona.repository.PersonaRepository;
 import com.habimed.habimedWebService.usuario.domain.model.TipoUsuarioEnum;
 import com.habimed.habimedWebService.usuario.domain.model.Usuario;
+import com.habimed.habimedWebService.usuario.dto.UsuarioFilterDto;
 import com.habimed.habimedWebService.usuario.dto.UsuarioInsertDto;
 import com.habimed.habimedWebService.usuario.dto.UsuarioResponseDto;
 import com.habimed.habimedWebService.usuario.dto.UsuarioUpdateDto;
@@ -42,45 +43,47 @@ public class UsuarioServiceImpl implements UsuarioService {
         return  responseDto;
     }
 
-//    @Override
-//    public List<UsuarioResponseDto> findAllWithConditions(UsuarioFilterDto usuarioFilterDto) {
-//        // IMPLEMENTACIÓN TEMPORAL (reemplazar con consultas personalizadas del repositorio):
-//        List<Usuario> usuarios = usuarioRepository.findAll();
-//
-//        // Filtrar por campos del FilterDto si no son null
-//        if (usuarioFilterDto.getDniPersona() != null) {
-//            usuarios = usuarios.stream()
-//                    .filter(u -> u.getPersona() != null &&
-//                            u.getPersona().getDni().equals(usuarioFilterDto.getDniPersona()))
-//                    .collect(Collectors.toList());
-//        }
-//
-//        if (usuarioFilterDto.getTipoUsuarioId() != null) {
-//            // Convertir ID a enum (asumiendo que 1=ADMIN, 2=DOCTOR, 3=PACIENTE, etc.)
-//            TipoUsuarioEnum tipoUsuario = convertirIdATipoUsuario(usuarioFilterDto.getTipoUsuarioId());
-//            if (tipoUsuario != null) {
-//                usuarios = usuarios.stream()
-//                        .filter(u -> u.getTipoUsuario() == tipoUsuario)
-//                        .collect(Collectors.toList());
-//            }
-//        }
-//
-//        if (usuarioFilterDto.getUsuario() != null && !usuarioFilterDto.getUsuario().trim().isEmpty()) {
-//            String usuarioBuscado = usuarioFilterDto.getUsuario().toLowerCase().trim();
-//            usuarios = usuarios.stream()
-//                    .filter(u -> u.getCorreo() != null &&
-//                            u.getCorreo().toLowerCase().contains(usuarioBuscado))
-//                    .collect(Collectors.toList());
-//        }
-//
-//        if (usuarioFilterDto.getEstado() != null) {
-//            usuarios = usuarios.stream()
-//                    .filter(u -> u.getEstado() != null && u.getEstado().equals(usuarioFilterDto.getEstado()))
-//                    .collect(Collectors.toList());
-//        }
-//
-//        return usuarios;
-//    }
+    @Override
+    public List<UsuarioResponseDto> findAllWithConditions(UsuarioFilterDto usuarioFilterDto) {
+        // IMPLEMENTACIÓN TEMPORAL (reemplazar con consultas personalizadas del repositorio):
+        List<Usuario> usuarios = usuarioRepository.findAll();
+
+        // Filtrar por campos del FilterDto si no son null
+        if (usuarioFilterDto.getDniPersona() != null) {
+            usuarios = usuarios.stream()
+                    .filter(u -> u.getPersona() != null &&
+                            u.getPersona().getDni().equals(usuarioFilterDto.getDniPersona()))
+                    .collect(Collectors.toList());
+        }
+
+        if (usuarioFilterDto.getTipoUsuario() != null) {
+            // Convertir ID a enum (asumiendo que 1=ADMIN, 2=DOCTOR, 3=PACIENTE, etc.)
+            usuarios = usuarios.stream()
+                    .filter(u -> u.getTipoUsuario() == usuarioFilterDto.getTipoUsuario())
+                    .collect(Collectors.toList());
+        }
+
+        if (usuarioFilterDto.getUsuario() != null && !usuarioFilterDto.getUsuario().trim().isEmpty()) {
+            String usuarioBuscado = usuarioFilterDto.getUsuario().toLowerCase().trim();
+            usuarios = usuarios.stream()
+                    .filter(u -> u.getCorreo() != null &&
+                            u.getCorreo().toLowerCase().contains(usuarioBuscado))
+                    .collect(Collectors.toList());
+        }
+
+        if (usuarioFilterDto.getEstado() != null) {
+            usuarios = usuarios.stream()
+                    .filter(u -> u.getEstado() != null && u.getEstado().equals(usuarioFilterDto.getEstado()))
+                    .collect(Collectors.toList());
+        }
+        List<UsuarioResponseDto> usuariosBuscados = new ArrayList<>();
+        for (Usuario usuario : usuarios) {
+           UsuarioResponseDto usuarioResponseDto = modelMapper.map(usuario, UsuarioResponseDto.class);
+           usuarioResponseDto.setIdPersona(usuario.getPersona().getId());
+           usuariosBuscados.add(usuarioResponseDto);
+        }
+        return usuariosBuscados;
+    }
 
     @Override
     public UsuarioResponseDto getById(Integer id) {
@@ -198,6 +201,32 @@ public class UsuarioServiceImpl implements UsuarioService {
         return Boolean.FALSE;
     }
 
-    
+    @Override
+    public UsuarioResponseDto validarCredenciales(String usuario, String contrasenia) {
+        // 1. Buscar usuario en BD
+        Usuario usuarioEncontrado = usuarioRepository.findByCorreo((usuario))
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+
+        // 2. Verificar existencia y contraseña (sin Spring Security)
+        if (usuarioEncontrado != null &&
+                usuarioEncontrado.getContrasenia().equals(contrasenia)) {
+
+            return mapToDto(usuarioEncontrado);
+        }
+        return null;
+    }
+
+    private UsuarioResponseDto mapToDto(Usuario usuario) {
+        UsuarioResponseDto dto = new UsuarioResponseDto();
+        dto.setIdUsuario(usuario.getIdUsuario());
+        dto.setIdPersona(usuario.getPersona().getId());
+        dto.setTipoUsuario(usuario.getTipoUsuario());
+        dto.setCorreo(usuario.getCorreo());
+        dto.setEstado(usuario.getEstado());
+        if (usuario.getTipoUsuario() == TipoUsuarioEnum.DOCTOR) {
+            dto.setCodigoCMP(usuario.getCodigoCMP());
+        }
+        return dto;
+    }
 
 }

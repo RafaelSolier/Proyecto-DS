@@ -7,9 +7,10 @@ import com.habimed.habimedWebService.usuario.dto.*;
 
 public interface UsuarioService {
     List<UsuarioResponseDto> findAll();
-//    List<UsuarioResponseDto> findAllWithConditions(UsuarioFilterDto usuarioFilterDto);
+    List<UsuarioResponseDto> findAllWithConditions(UsuarioFilterDto usuarioFilterDto);
     UsuarioResponseDto getById(Integer id);
     UsuarioResponseDto save(UsuarioInsertDto usuarioInsertDto);
     Boolean delete(Integer id);
     UsuarioResponseDto update(Integer id, UsuarioUpdateDto usuarioUpdateDto);
+    UsuarioResponseDto validarCredenciales(String usuario, String contrasenia);
 }
