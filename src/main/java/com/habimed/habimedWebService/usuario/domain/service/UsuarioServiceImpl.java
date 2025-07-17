@@ -1,8 +1,15 @@
 package com.habimed.habimedWebService.usuario.domain.service;
 
+import com.habimed.habimedWebService.auth.dto.LoginRequest;
+import com.habimed.habimedWebService.auth.dto.RegisterRequest;
 import com.habimed.habimedWebService.exception.ConflictException;
 import com.habimed.habimedWebService.exception.ResourceNotFoundException;
 import com.habimed.habimedWebService.persona.domain.model.Persona;
+import com.habimed.habimedWebService.persona.domain.service.PersonaService;
+import com.habimed.habimedWebService.persona.dto.PersonaFilterDto;
+import com.habimed.habimedWebService.persona.dto.PersonaInsertDto;
+import com.habimed.habimedWebService.persona.dto.PersonaResponseDto;
+import com.habimed.habimedWebService.persona.dto.PersonaUpdateDto;
 import com.habimed.habimedWebService.persona.repository.PersonaRepository;
 import com.habimed.habimedWebService.usuario.domain.model.TipoUsuarioEnum;
 import com.habimed.habimedWebService.usuario.domain.model.Usuario;
@@ -28,6 +35,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final PersonaRepository personaRepository;
     private final ModelMapper modelMapper;
+    private final PersonaService personaService;
     // Opcional: Para encriptar contraseñas
     // private final PasswordEncoder passwordEncoder;
 
@@ -202,18 +210,68 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
-    public UsuarioResponseDto validarCredenciales(String usuario, String contrasenia) {
+    public UsuarioResponseDto validarCredenciales(LoginRequest loginRequest) {
         // 1. Buscar usuario en BD
-        Usuario usuarioEncontrado = usuarioRepository.findByCorreo((usuario))
+        Usuario usuarioEncontrado = usuarioRepository.findByCorreo((loginRequest.getUsuario()))
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
 
         // 2. Verificar existencia y contraseña (sin Spring Security)
         if (usuarioEncontrado != null &&
-                usuarioEncontrado.getContrasenia().equals(contrasenia)) {
+                usuarioEncontrado.getContrasenia().equals(loginRequest.getContrasenia())) {
 
             return mapToDto(usuarioEncontrado);
         }
         return null;
+    }
+
+    @Override
+    public UsuarioResponseDto registrarUsuario(RegisterRequest registerRequest) {
+        Persona persona = new Persona();
+        // Verificar si la persona existe (por DNI)
+        PersonaFilterDto filtros = new PersonaFilterDto();
+        filtros.setDni(registerRequest.getDni());
+        List<PersonaResponseDto> personas = personaService.findAllWithConditions(filtros);
+        // Si existe usar su ID
+        if (personas.size() == 1) {
+            // Actualizar sus datos
+            PersonaUpdateDto personaUpdateDto = modelMapper.map(personas.get(0), PersonaUpdateDto.class);
+            personaService.update(personas.get(0).getId(), personaUpdateDto);
+            persona = personaRepository.findById(personas.get(0).getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Persona no encontrada. Error al guardar persona."));
+        } else if (personas.size() > 1) {
+            throw new ConflictException("No se puede registrar el usuario");
+        } else {
+            // Si no existe crearla y obtener su ID
+            Persona nuevaPersona = modelMapper.map(registerRequest, Persona.class);
+            nuevaPersona.setId(null);
+            persona = personaRepository.save(nuevaPersona);
+        }
+
+        UsuarioInsertDto usuarioInsertDto = modelMapper.map(registerRequest, UsuarioInsertDto.class);
+        usuarioInsertDto.setIdPersona(persona.getId());
+        // Agregar un usuario nuevo con el ID de persona realcionado
+        // Verificar que la persona no tenga ya un usuario del mismo tipo
+        List<Usuario> usuariosPersona = usuarioRepository.findAll().stream()
+                .filter(u -> u.getPersona() != null &&
+                        u.getPersona().getId().equals(usuarioInsertDto.getIdPersona()))
+                .collect(Collectors.toList());
+
+        boolean tipoUsuarioExiste = usuariosPersona.stream()
+                .anyMatch(u -> u.getTipoUsuario() == usuarioInsertDto.getTipoUsuario());
+
+        if (tipoUsuarioExiste) {
+            throw new ConflictException("La persona ya tiene un usuario de tipo: " + usuarioInsertDto.getTipoUsuario());
+        }
+
+        Usuario usuario = modelMapper.map(usuarioInsertDto, Usuario.class);
+        usuario.setPersona(persona);
+
+        // Establecer estado por defecto
+        usuario.setEstado(usuarioInsertDto.getEstado() != null ? usuarioInsertDto.getEstado() : false);
+        usuario.setIdUsuario(null);
+        Usuario _usuario = usuarioRepository.save(usuario);
+
+        return modelMapper.map(_usuario,UsuarioResponseDto.class);
     }
 
     private UsuarioResponseDto mapToDto(Usuario usuario) {
